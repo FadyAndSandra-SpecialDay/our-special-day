@@ -12,61 +12,61 @@
 
 @layer base {
   :root {
-    /* Romantic wedding palette */
-    --background: 36 33% 97%;
-    --foreground: 30 10% 20%;
+    /* Soft pastel wedding palette */
+    --background: 340 30% 98%;
+    --foreground: 340 15% 25%;
 
-    --card: 36 40% 98%;
-    --card-foreground: 30 10% 20%;
+    --card: 340 35% 99%;
+    --card-foreground: 340 15% 25%;
 
-    --popover: 36 40% 98%;
-    --popover-foreground: 30 10% 20%;
+    --popover: 340 35% 99%;
+    --popover-foreground: 340 15% 25%;
 
-    /* Champagne gold */
-    --primary: 38 50% 55%;
-    --primary-foreground: 36 33% 97%;
+    /* Soft rose pink */
+    --primary: 340 45% 75%;
+    --primary-foreground: 340 35% 99%;
 
-    /* Soft blush */
-    --secondary: 12 30% 90%;
-    --secondary-foreground: 30 10% 25%;
+    /* Lavender blush */
+    --secondary: 300 25% 92%;
+    --secondary-foreground: 340 15% 30%;
 
-    /* Dusty rose accent */
-    --accent: 350 25% 75%;
-    --accent-foreground: 30 10% 20%;
+    /* Soft peach accent */
+    --accent: 20 50% 85%;
+    --accent-foreground: 340 15% 25%;
 
-    /* Sage green muted */
-    --muted: 120 15% 92%;
-    --muted-foreground: 30 10% 45%;
+    /* Mint sage muted */
+    --muted: 150 25% 92%;
+    --muted-foreground: 340 10% 45%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 70% 65%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 36 25% 88%;
-    --input: 36 25% 88%;
-    --ring: 38 50% 55%;
+    --border: 340 25% 90%;
+    --input: 340 25% 90%;
+    --ring: 340 45% 75%;
 
     --radius: 0.5rem;
 
-    /* Custom wedding tokens */
-    --gold: 38 60% 50%;
-    --gold-light: 40 55% 75%;
-    --blush: 12 35% 85%;
-    --cream: 40 40% 95%;
-    --sage: 140 20% 75%;
-    --rose: 350 30% 70%;
+    /* Custom pastel wedding tokens */
+    --gold: 45 55% 78%;
+    --gold-light: 45 50% 88%;
+    --blush: 340 40% 90%;
+    --cream: 40 45% 96%;
+    --sage: 150 30% 82%;
+    --rose: 340 50% 80%;
 
     /* Typography */
     --font-display: "Playfair Display", serif;
     --font-body: "Cormorant Garamond", serif;
 
     /* Shadows */
-    --shadow-soft: 0 4px 20px -4px hsl(30 10% 20% / 0.08);
-    --shadow-glow: 0 0 40px hsl(38 50% 55% / 0.15);
+    --shadow-soft: 0 4px 20px -4px hsl(340 15% 25% / 0.06);
+    --shadow-glow: 0 0 40px hsl(340 45% 75% / 0.2);
 
     /* Gradients */
-    --gradient-hero: linear-gradient(180deg, hsl(36 33% 97%) 0%, hsl(36 40% 94%) 100%);
-    --gradient-gold: linear-gradient(135deg, hsl(38 50% 55%) 0%, hsl(40 55% 65%) 100%);
-    --gradient-romantic: linear-gradient(180deg, hsl(12 30% 90% / 0.3) 0%, hsl(350 25% 75% / 0.2) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(340 30% 98%) 0%, hsl(300 25% 96%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(340 45% 75%) 0%, hsl(20 50% 85%) 100%);
+    --gradient-romantic: linear-gradient(180deg, hsl(300 25% 92% / 0.4) 0%, hsl(340 40% 90% / 0.3) 100%);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;

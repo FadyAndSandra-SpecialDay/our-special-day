@@ -1,11 +1,11 @@
 // Wedding Configuration - Edit these values to customize your invitation
 export const weddingConfig = {
   // Couple names
-  bride: "Fatima",
-  groom: "Saad",
+  bride: "Sandra",
+  groom: "Fady",
   
   // Wedding date and time (ISO format)
-  weddingDate: "2025-06-15T16:00:00",
+  weddingDate: "2026-02-14T16:00:00",
   
   // Venue details
   venue: {
