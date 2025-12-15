@@ -27,6 +27,28 @@ git clone <YOUR_GIT_URL>
 # 2. Navigate to the project directory
 cd <YOUR_PROJECT_NAME>
 
+  PowerShell (if you're on Windows):
+  ```powershell
+  npm install -D gh-pages
+  # Add the same script to package.json, then:
+  npm run deploy
+  ```
+
+  Notes:
+  - If your repo is published at `https://<username>.github.io/<repo>/` you should set `base` in `vite.config.ts` to `'/<repo>/'`.
+    Example:
+    ```ts
+    import { defineConfig } from 'vite'
+    export default defineConfig({
+      base: '/our-special-day/',
+      // ...other config
+    })
+    ```
+  - Alternatively, you can build with an explicit base without changing `vite.config.ts`:
+    ```bash
+    npm run build -- --base=/our-special-day/
+    ```
+  - If you prefer relative assets (so a `base` change isn't required), set `base: './'` in `vite.config.ts` and deploy the `dist` contents to the `docs/` folder or to the root of the `gh-pages` branch.
 # 3. Install dependencies
 npm install
 
@@ -77,7 +99,15 @@ on:
     branches: [main]
 
 permissions:
+### Quick Checklist
+- Set `base` in `vite.config.ts` or pass `--base` during `vite build`.
+- Add any runtime environment variables to **Settings → Secrets → Actions** (Supabase keys, service account JSON if needed).
+- If using the `gh-pages` package, add the `deploy` script to `package.json` and run `npm run deploy` locally to push `dist` to the `gh-pages` branch.
   contents: read
+### Troubleshooting
+- If homepage loads but assets 404, ensure your `base` matches the repo path (`/REPO_NAME/`) or use `base: './'` for relative assets.
+- If GitHub Actions fails with permissions, confirm the workflow has `pages: write` and `id-token: write` under `permissions`.
+- When deploying Supabase functions or accessing private Google resources, ensure secrets are stored in GitHub and service accounts are shared with the Google resources (Sheets/Drive).
   pages: write
   id-token: write
 

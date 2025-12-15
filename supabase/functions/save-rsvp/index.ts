@@ -5,95 +5,114 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+// Helper: create/get OAuth2 access token using service account JSON stored in env
+async function getAccessToken(scopes: string) {
+  const saJson = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_JSON') || Deno.env.get('SERVICE_ACCOUNT_JSON');
+  if (!saJson) throw new Error('SERVICE_ACCOUNT_JSON (or GOOGLE_SERVICE_ACCOUNT_JSON) not configured');
+
+  const sa = JSON.parse(saJson);
+  const privateKeyPem = sa.private_key as string;
+  const clientEmail = sa.client_email as string;
+  if (!privateKeyPem || !clientEmail) throw new Error('Invalid service account JSON');
+
+  // create JWT
+  const header = { alg: 'RS256', typ: 'JWT' };
+  const now = Math.floor(Date.now() / 1000);
+  const payload = {
+    iss: clientEmail,
+    scope: scopes,
+    aud: 'https://oauth2.googleapis.com/token',
+    exp: now + 3600,
+    iat: now,
+  };
+
+  const toBase64Url = (obj: any) => {
+    const s = JSON.stringify(obj);
+    const b = new TextEncoder().encode(s);
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(b)));
+    return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  };
+
+  const headerB64 = toBase64Url(header);
+  const payloadB64 = toBase64Url(payload);
+  const unsigned = `${headerB64}.${payloadB64}`;
+
+  // import PEM private key
+  const pem = privateKeyPem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\n/g, '');
+  const derStr = atob(pem);
+  const der = new Uint8Array(derStr.split('').map((c) => c.charCodeAt(0))).buffer;
+
+  const key = await crypto.subtle.importKey('pkcs8', der, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']);
+
+  const signature = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, new TextEncoder().encode(unsigned));
+  const sigBytes = new Uint8Array(signature);
+  let sigBase64 = '';
+  for (let i = 0; i < sigBytes.length; i++) sigBase64 += String.fromCharCode(sigBytes[i]);
+  sigBase64 = btoa(sigBase64).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+  const jwt = `${unsigned}.${sigBase64}`;
+
+  // Exchange JWT for access token
+  const resp = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${encodeURIComponent(jwt)}`,
+  });
+
+  if (!resp.ok) {
+    const txt = await resp.text();
+    throw new Error(`Failed to obtain access token: ${txt}`);
   }
+
+  const data = await resp.json();
+  return data.access_token as string;
+}
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
     const { guestName, attending, rowIndex } = await req.json();
-    const apiKey = Deno.env.get('GOOGLE_API_KEY');
-    const sheetId = "13o9Y6YLPMtz-YFREYNu1L4o4dYrj3Dr-V3C_UstGeMs";
+    const sheetId = '13o9Y6YLPMtz-YFREYNu1L4o4dYrj3Dr-V3C_UstGeMs';
 
-    if (!apiKey) {
-      console.error('GOOGLE_API_KEY not configured');
-      throw new Error('Google API key not configured');
-    }
-
-    if (!guestName) {
-      console.error('No guestName provided');
-      throw new Error('Guest name is required');
-    }
+    if (!guestName) throw new Error('guestName is required');
 
     console.log(`Saving RSVP for: ${guestName}, attending: ${attending}, row: ${rowIndex}`);
 
-    // Get current date and time
     const now = new Date();
     const date = now.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
     const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-    
-    const confirmationText = attending ? "Yes, Attending" : "Regretfully Decline";
-    
-    // Update the row with confirmation, date, and time (columns B, C, D)
-    // Row index is 1-based, add 1 for header row
-    const actualRow = rowIndex + 2; // +1 for header, +1 because rowIndex is 0-based
+    const confirmationText = attending ? 'Yes, Attending' : 'Regretfully Decline';
+
+    const actualRow = rowIndex + 2;
     const range = `Sheet1!B${actualRow}:D${actualRow}`;
-    
-    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED&key=${apiKey}`;
-    
+
+    // Obtain service account token with Sheets scope
+    const token = await getAccessToken('https://www.googleapis.com/auth/spreadsheets');
+
+    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`;
+
     const response = await fetch(updateUrl, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        range: range,
-        majorDimension: "ROWS",
-        values: [[confirmationText, date, time]]
-      })
+      body: JSON.stringify({ range, majorDimension: 'ROWS', values: [[confirmationText, date, time]] }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Google Sheets API error:', errorText);
-      
-      // If API key doesn't have write access, we still want to acknowledge the RSVP
-      // The RSVP was received, just couldn't be saved to sheet
-      console.log('Note: API key may not have write access. RSVP logged but not saved to sheet.');
-      
-      return new Response(JSON.stringify({ 
-        success: true, 
-        message: 'RSVP received! Thank you.',
-        note: 'Response logged successfully.',
-        guestName,
-        attending,
-        date,
-        time
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      // Still acknowledge RSVP even if write fails
+      return new Response(JSON.stringify({ success: true, message: 'RSVP received (write failed)', guestName, attending, date, time, note: errorText }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const data = await response.json();
-    console.log('RSVP saved successfully:', data);
-
-    return new Response(JSON.stringify({ 
-      success: true, 
-      message: 'RSVP saved successfully!',
-      guestName,
-      attending,
-      date,
-      time
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.log('RSVP saved successfully');
+    return new Response(JSON.stringify({ success: true, message: 'RSVP saved successfully!', guestName, attending, date, time }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (error) {
     console.error('Error saving RSVP:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-    return new Response(JSON.stringify({ success: false, error: errorMessage }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify({ success: false, error: errorMessage }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
