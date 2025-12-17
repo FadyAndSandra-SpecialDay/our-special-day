@@ -5,8 +5,80 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Get access token using OAuth refresh token (uses YOUR Google account quota)
-async function getAccessToken(): Promise<string> {
+// Get access token for Google APIs.
+// Prefer Service Account (stable, no refresh-token flakiness). Fallback to OAuth refresh token if SA is not configured.
+async function getAccessToken(scopes: string): Promise<string> {
+  const serviceAccountJson = (Deno.env.get('SERVICE_ACCOUNT_JSON') ?? '').trim();
+
+  // --- 1) Service Account flow (recommended)
+  if (serviceAccountJson) {
+    let serviceAccount: any;
+    try {
+      serviceAccount = JSON.parse(serviceAccountJson);
+    } catch {
+      // Some UIs escape newlines or add extra slashes
+      const cleaned = serviceAccountJson.replace(/\\n/g, '\n').replace(/\\/g, '');
+      serviceAccount = JSON.parse(cleaned);
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    const header = { alg: 'RS256', typ: 'JWT' };
+    const payload = {
+      iss: serviceAccount.client_email,
+      scope: scopes,
+      aud: 'https://oauth2.googleapis.com/token',
+      iat: now,
+      exp: now + 3600,
+    };
+
+    const encode = (obj: object) =>
+      btoa(JSON.stringify(obj))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+
+    const unsignedToken = `${encode(header)}.${encode(payload)}`;
+
+    const pemContents = (serviceAccount.private_key as string)
+      .replace(/-----BEGIN PRIVATE KEY-----/, '')
+      .replace(/-----END PRIVATE KEY-----/, '')
+      .replace(/\s/g, '');
+
+    const binaryKey = Uint8Array.from(atob(pemContents), (c) => c.charCodeAt(0));
+
+    const cryptoKey = await crypto.subtle.importKey(
+      'pkcs8',
+      binaryKey,
+      { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+
+    const signature = await crypto.subtle.sign(
+      'RSASSA-PKCS1-v1_5',
+      cryptoKey,
+      new TextEncoder().encode(unsignedToken)
+    );
+
+    const signedToken =
+      `${unsignedToken}.` +
+      btoa(String.fromCharCode(...new Uint8Array(signature)))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${encodeURIComponent(signedToken)}`,
+    });
+
+    const tokenData = await tokenResponse.json();
+    if (!tokenData.access_token) throw new Error(`Token error: ${JSON.stringify(tokenData)}`);
+    return tokenData.access_token as string;
+  }
+
+  // --- 2) OAuth refresh-token fallback
   // IMPORTANT: trim to avoid hidden whitespace/newlines in secrets
   const clientId = (Deno.env.get('GOOGLE_OAUTH_CLIENT_ID') ?? '').trim();
   const clientSecret = (Deno.env.get('GOOGLE_OAUTH_CLIENT_SECRET') ?? '').trim();
@@ -14,7 +86,7 @@ async function getAccessToken(): Promise<string> {
 
   if (!clientId || !clientSecret || !refreshToken) {
     throw new Error(
-      'Missing OAuth credentials: GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, or GOOGLE_OAUTH_REFRESH_TOKEN'
+      'Missing credentials: either SERVICE_ACCOUNT_JSON OR (GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, GOOGLE_OAUTH_REFRESH_TOKEN)'
     );
   }
 
@@ -32,7 +104,6 @@ async function getAccessToken(): Promise<string> {
   // Google sometimes returns {"error":"internal_failure"} transiently.
   // We retry once and also try the legacy endpoint.
   const endpoints = ['https://oauth2.googleapis.com/token', 'https://www.googleapis.com/oauth2/v4/token'];
-
   let lastErrorText = '';
 
   for (const tokenUrl of endpoints) {
@@ -41,7 +112,6 @@ async function getAccessToken(): Promise<string> {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          // Helpful for debugging/consistency; does not leak secrets.
           'User-Agent': 'lovable-upload-photo/1.0',
         },
         body,
@@ -61,7 +131,6 @@ async function getAccessToken(): Promise<string> {
 
       const isInternalFailure = txt.includes('internal_failure');
       if (isInternalFailure && attempt === 0) {
-        // short backoff then retry once
         await new Promise((r) => setTimeout(r, 800));
         continue;
       }
@@ -110,7 +179,7 @@ serve(async (req) => {
 
     console.log(`Uploading file: ${fileName} to folder: ${folderId}`);
 
-    const token = await getAccessToken();
+    const token = await getAccessToken('https://www.googleapis.com/auth/drive');
 
     const boundary = '-------314159265358979323846';
     const metadata = { name: fileName, parents: [folderId] };
