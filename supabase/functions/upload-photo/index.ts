@@ -6,17 +6,73 @@ const corsHeaders = {
 };
 
 // Get access token for Google APIs.
-// Prefer Service Account (stable, no refresh-token flakiness). Fallback to OAuth refresh token if SA is not configured.
+// For UPLOADS: Prefer OAuth refresh token (uses YOUR Google account quota).
+// Service Accounts don't have storage quota for regular Drive folders.
 async function getAccessToken(scopes: string): Promise<string> {
-  const serviceAccountJson = (Deno.env.get('SERVICE_ACCOUNT_JSON') ?? '').trim();
+  // --- 1) OAuth refresh-token flow (preferred for uploads - uses user's quota)
+  const clientId = (Deno.env.get('GOOGLE_OAUTH_CLIENT_ID') ?? '').trim();
+  const clientSecret = (Deno.env.get('GOOGLE_OAUTH_CLIENT_SECRET') ?? '').trim();
+  const refreshToken = (Deno.env.get('GOOGLE_OAUTH_REFRESH_TOKEN') ?? '').trim();
 
-  // --- 1) Service Account flow (recommended)
+  if (clientId && clientSecret && refreshToken) {
+    console.log(
+      `Refreshing OAuth access token... (clientIdLen=${clientId.length}, refreshTokenLen=${refreshToken.length})`
+    );
+
+    const body = new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      refresh_token: refreshToken,
+      grant_type: 'refresh_token',
+    }).toString();
+
+    const endpoints = ['https://oauth2.googleapis.com/token', 'https://www.googleapis.com/oauth2/v4/token'];
+    let lastErrorText = '';
+
+    for (const tokenUrl of endpoints) {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const resp = await fetch(tokenUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'lovable-upload-photo/1.0',
+          },
+          body,
+        });
+
+        const txt = await resp.text();
+
+        if (resp.ok) {
+          const data = JSON.parse(txt);
+          if (!data?.access_token) throw new Error('Token endpoint response missing access_token');
+          console.log('OAuth token refreshed successfully');
+          return data.access_token as string;
+        }
+
+        lastErrorText = txt;
+        console.error(`OAuth token refresh failed (${resp.status}) via ${tokenUrl}:`, txt);
+
+        const isInternalFailure = txt.includes('internal_failure');
+        if (isInternalFailure && attempt === 0) {
+          await new Promise((r) => setTimeout(r, 800));
+          continue;
+        }
+
+        break;
+      }
+    }
+
+    throw new Error(`Failed to refresh access token: ${lastErrorText || 'unknown_error'}`);
+  }
+
+  // --- 2) Service Account fallback (only works with Shared Drives, not regular folders)
+  const serviceAccountJson = (Deno.env.get('SERVICE_ACCOUNT_JSON') ?? '').trim();
   if (serviceAccountJson) {
+    console.log('Using Service Account authentication (note: only works with Shared Drives)');
     let serviceAccount: any;
     try {
       serviceAccount = JSON.parse(serviceAccountJson);
     } catch {
-      // Some UIs escape newlines or add extra slashes
       const cleaned = serviceAccountJson.replace(/\\n/g, '\n').replace(/\\/g, '');
       serviceAccount = JSON.parse(cleaned);
     }
@@ -78,68 +134,9 @@ async function getAccessToken(scopes: string): Promise<string> {
     return tokenData.access_token as string;
   }
 
-  // --- 2) OAuth refresh-token fallback
-  // IMPORTANT: trim to avoid hidden whitespace/newlines in secrets
-  const clientId = (Deno.env.get('GOOGLE_OAUTH_CLIENT_ID') ?? '').trim();
-  const clientSecret = (Deno.env.get('GOOGLE_OAUTH_CLIENT_SECRET') ?? '').trim();
-  const refreshToken = (Deno.env.get('GOOGLE_OAUTH_REFRESH_TOKEN') ?? '').trim();
-
-  if (!clientId || !clientSecret || !refreshToken) {
-    throw new Error(
-      'Missing credentials: either SERVICE_ACCOUNT_JSON OR (GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, GOOGLE_OAUTH_REFRESH_TOKEN)'
-    );
-  }
-
-  console.log(
-    `Refreshing OAuth access token... (clientIdLen=${clientId.length}, refreshTokenLen=${refreshToken.length})`
+  throw new Error(
+    'Missing credentials: need GOOGLE_OAUTH_CLIENT_ID + GOOGLE_OAUTH_CLIENT_SECRET + GOOGLE_OAUTH_REFRESH_TOKEN'
   );
-
-  const body = new URLSearchParams({
-    client_id: clientId,
-    client_secret: clientSecret,
-    refresh_token: refreshToken,
-    grant_type: 'refresh_token',
-  }).toString();
-
-  // Google sometimes returns {"error":"internal_failure"} transiently.
-  // We retry once and also try the legacy endpoint.
-  const endpoints = ['https://oauth2.googleapis.com/token', 'https://www.googleapis.com/oauth2/v4/token'];
-  let lastErrorText = '';
-
-  for (const tokenUrl of endpoints) {
-    for (let attempt = 0; attempt < 2; attempt++) {
-      const resp = await fetch(tokenUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent': 'lovable-upload-photo/1.0',
-        },
-        body,
-      });
-
-      const txt = await resp.text();
-
-      if (resp.ok) {
-        const data = JSON.parse(txt);
-        if (!data?.access_token) throw new Error('Token endpoint response missing access_token');
-        console.log('OAuth token refreshed successfully');
-        return data.access_token as string;
-      }
-
-      lastErrorText = txt;
-      console.error(`OAuth token refresh failed (${resp.status}) via ${tokenUrl}:`, txt);
-
-      const isInternalFailure = txt.includes('internal_failure');
-      if (isInternalFailure && attempt === 0) {
-        await new Promise((r) => setTimeout(r, 800));
-        continue;
-      }
-
-      break;
-    }
-  }
-
-  throw new Error(`Failed to refresh access token: ${lastErrorText || 'unknown_error'}`);
 }
 
 serve(async (req) => {
