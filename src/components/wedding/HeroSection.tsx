@@ -2,10 +2,12 @@ import { motion } from "framer-motion";
 import CountdownTimer from "./CountdownTimer";
 import { weddingConfig } from "@/lib/weddingConfig";
 import { Heart } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const HeroSection = () => {
+  const { t, i18n } = useTranslation();
   const weddingDate = new Date(weddingConfig.weddingDate);
-  const formattedDate = weddingDate.toLocaleDateString("en-US", {
+  const formattedDate = weddingDate.toLocaleDateString(i18n.language === 'ar' ? 'ar-EG' : 'en-US', {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -32,7 +34,7 @@ const HeroSection = () => {
           transition={{ duration: 0.6 }}
           className="text-sm md:text-base font-body text-muted-foreground uppercase tracking-[0.3em] mb-8"
         >
-          {weddingConfig.messages.hero}
+          {t("hero.togetherWithFamilies")}
         </motion.p>
 
         <motion.div
@@ -42,11 +44,11 @@ const HeroSection = () => {
           className="mb-6"
         >
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-semibold text-foreground leading-tight">
-            {weddingConfig.bride}
+            {t("hero.bride")}
             <span className="inline-flex items-center mx-4 md:mx-6">
               <Heart className="w-8 h-8 md:w-12 md:h-12 text-gold fill-gold/30" />
             </span>
-            {weddingConfig.groom}
+            {t("hero.groom")}
           </h1>
         </motion.div>
 
@@ -67,7 +69,7 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="text-lg md:text-xl font-body text-muted-foreground mb-4 max-w-2xl mx-auto italic"
         >
-          {weddingConfig.messages.invitation}
+          {t("hero.invitation")}
         </motion.p>
 
         <motion.p
@@ -86,10 +88,10 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.7 }}
           className="mb-12 max-w-2xl mx-auto"
         >
-          <blockquote className="text-base md:text-lg font-body text-muted-foreground italic border-l-2 border-gold/50 pl-4">
-            "{weddingConfig.bibleVerse.text}"
+          <blockquote className="text-base md:text-lg font-body text-muted-foreground italic border-l-2 border-gold/50 pl-4 rtl:border-l-0 rtl:border-r-2 rtl:pl-0 rtl:pr-4">
+            "{t("hero.bibleVerse.text")}"
           </blockquote>
-          <p className="text-sm font-body text-gold mt-2">— {weddingConfig.bibleVerse.reference}</p>
+          <p className="text-sm font-body text-gold mt-2">— {t("hero.bibleVerse.reference")}</p>
         </motion.div>
 
         <motion.div
@@ -98,7 +100,7 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.8 }}
         >
           <p className="text-sm font-body text-muted-foreground uppercase tracking-widest mb-6">
-            Counting down to our special day
+            {t("hero.countingDown")}
           </p>
           <CountdownTimer targetDate={weddingConfig.weddingDate} />
         </motion.div>

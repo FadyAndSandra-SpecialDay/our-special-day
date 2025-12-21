@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Upload, X, Check, Camera } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { weddingConfig } from "@/lib/weddingConfig";
+import { useTranslation } from "react-i18next";
 
 interface UploadedFile {
   id: string;
@@ -15,6 +16,7 @@ interface UploadedFile {
 }
 
 const PhotoUploadSection = () => {
+  const { t } = useTranslation();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const { toast } = useToast();
@@ -23,16 +25,16 @@ const PhotoUploadSection = () => {
     const validFiles = Array.from(fileList).filter((file) => {
       if (!file.type.startsWith("image/")) {
         toast({
-          title: "Invalid file type",
-          description: `${file.name} is not an image file.`,
+          title: t("upload.invalidFile"),
+          description: t("upload.invalidFileMessage", { fileName: file.name }),
           variant: "destructive",
         });
         return false;
       }
       if (file.size > 10 * 1024 * 1024) {
         toast({
-          title: "File too large",
-          description: `${file.name} exceeds 10MB limit.`,
+          title: t("upload.fileTooLarge"),
+          description: t("upload.fileTooLargeMessage", { fileName: file.name }),
           variant: "destructive",
         });
         return false;
@@ -143,16 +145,16 @@ const PhotoUploadSection = () => {
           )
         );
         toast({
-          title: "Upload failed",
-          description: err instanceof Error ? err.message : "Unknown error",
+          title: t("upload.error"),
+          description: err instanceof Error ? err.message : t("upload.errorMessage"),
           variant: "destructive",
         });
       }
     }
 
     toast({
-      title: "Upload finished",
-      description: "If any photo failed, you'll see an error message above.",
+      title: t("upload.success"),
+      description: t("upload.successMessage"),
     });
   };
 
@@ -170,13 +172,13 @@ const PhotoUploadSection = () => {
           className="text-center mb-12"
         >
           <p className="text-sm font-body text-gold uppercase tracking-[0.3em] mb-4">
-            Share The Love
+            {t("upload.shareTheLove")}
           </p>
           <h2 className="text-4xl md:text-5xl font-display font-semibold text-foreground mb-4">
-            Upload Your Photos
+            {t("upload.title")}
           </h2>
           <p className="text-lg font-body text-muted-foreground max-w-md mx-auto">
-            Help us capture every moment by sharing your photos from the celebration
+            {t("upload.subtitle")}
           </p>
         </motion.div>
 
@@ -212,10 +214,10 @@ const PhotoUploadSection = () => {
                 </div>
                 <div>
                   <p className="text-lg font-display font-medium text-foreground mb-1">
-                    Drag & drop your photos here
+                    {t("upload.dragDrop")}
                   </p>
                   <p className="text-sm font-body text-muted-foreground">
-                    or click to browse • Max 10MB per file
+                    {t("upload.orClick")}
                   </p>
                 </div>
               </div>
@@ -227,8 +229,12 @@ const PhotoUploadSection = () => {
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-display font-medium text-foreground">
                     {pendingFiles.length > 0
-                      ? `${pendingFiles.length} photo${pendingFiles.length > 1 ? "s" : ""} ready to upload`
-                      : `${uploadedFiles.length} photo${uploadedFiles.length > 1 ? "s" : ""} uploaded`}
+                      ? pendingFiles.length === 1
+                        ? t("upload.photosReady", { count: pendingFiles.length })
+                        : t("upload.photosReadyPlural", { count: pendingFiles.length })
+                      : uploadedFiles.length === 1
+                      ? t("upload.photosUploaded", { count: uploadedFiles.length })
+                      : t("upload.photosUploadedPlural", { count: uploadedFiles.length })}
                   </h3>
                   {pendingFiles.length > 0 && (
                     <Button
@@ -236,7 +242,7 @@ const PhotoUploadSection = () => {
                       className="bg-gold hover:bg-gold/90 text-primary-foreground"
                     >
                       <Upload className="w-4 h-4 mr-2" />
-                      Upload All
+                      {t("upload.uploadAll")}
                     </Button>
                   )}
                 </div>

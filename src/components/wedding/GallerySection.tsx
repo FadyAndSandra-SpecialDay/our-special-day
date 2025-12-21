@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { weddingConfig } from "@/lib/weddingConfig";
+import { useTranslation } from "react-i18next";
 
 interface GalleryImage {
   id: string;
@@ -13,6 +14,7 @@ interface GalleryImage {
 }
 
 const GallerySection = () => {
+  const { t } = useTranslation();
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,7 +30,7 @@ const GallerySection = () => {
 
         if (error) {
           console.error('Error fetching gallery:', error);
-          setError('Unable to load gallery');
+          setError(t("gallery.error"));
           return;
         }
 
@@ -37,7 +39,7 @@ const GallerySection = () => {
         }
       } catch (err) {
         console.error('Failed to fetch gallery:', err);
-        setError('Unable to load gallery');
+        setError(t("gallery.error"));
       } finally {
         setLoading(false);
       }
@@ -69,13 +71,13 @@ const GallerySection = () => {
           className="text-center mb-12"
         >
           <p className="text-sm font-body text-gold uppercase tracking-[0.3em] mb-4">
-            Our Moments
+            {t("gallery.ourMoments")}
           </p>
           <h2 className="text-4xl md:text-5xl font-display font-semibold text-foreground mb-4">
-            Gallery
+            {t("gallery.title")}
           </h2>
           <p className="text-lg font-body text-muted-foreground max-w-md mx-auto">
-            A glimpse into our journey together
+            {t("gallery.subtitle")}
           </p>
         </motion.div>
 
@@ -96,7 +98,7 @@ const GallerySection = () => {
         {/* Empty State */}
         {!loading && !error && images.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-muted-foreground">No photos yet. Check back soon!</p>
+            <p className="text-muted-foreground">{t("gallery.noPhotos")}</p>
           </div>
         )}
 

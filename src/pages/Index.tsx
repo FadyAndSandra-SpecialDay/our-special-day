@@ -6,16 +6,17 @@ import GallerySection from "@/components/wedding/GallerySection";
 import RSVPSection from "@/components/wedding/RSVPSection";
 import PhotoUploadSection from "@/components/wedding/PhotoUploadSection";
 import Footer from "@/components/wedding/Footer";
-import { weddingConfig } from "@/lib/weddingConfig";
+import { useTranslation } from "react-i18next";
 
 const Index = () => {
+  const { t } = useTranslation();
   return (
     <>
       <Helmet>
-        <title>{weddingConfig.bride} & {weddingConfig.groom} | Wedding Invitation</title>
+        <title>{t("hero.bride")} & {t("hero.groom")} | Wedding Invitation</title>
         <meta 
           name="description" 
-          content={`You're invited to celebrate the wedding of ${weddingConfig.bride} & ${weddingConfig.groom}. RSVP and join us for our special day.`} 
+          content={`You're invited to celebrate the wedding of ${t("hero.bride")} & ${t("hero.groom")}. RSVP and join us for our special day.`} 
         />
       </Helmet>
 

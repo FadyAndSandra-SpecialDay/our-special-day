@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { Check, Heart, X, Loader2, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 
 interface GuestInfo {
   name: string;
@@ -15,6 +16,7 @@ interface GuestInfo {
 }
 
 const RSVPSection = () => {
+  const { t } = useTranslation();
   const [selectedGuest, setSelectedGuest] = useState<GuestInfo | null>(null);
   const [attendance, setAttendance] = useState<"attending" | "not-attending" | "">("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,8 +62,8 @@ const RSVPSection = () => {
 
     if (!selectedGuest || !attendance) {
       toast({
-        title: "Please complete the form",
-        description: "Select your name and confirm your attendance.",
+        title: t("rsvp.formIncomplete"),
+        description: t("rsvp.formIncompleteMessage"),
         variant: "destructive",
       });
       return;
@@ -96,7 +98,7 @@ const RSVPSection = () => {
         }
 
         toast({
-          title: "Couldn't save RSVP",
+          title: t("rsvp.error"),
           description,
           variant: "destructive",
         });
@@ -105,14 +107,14 @@ const RSVPSection = () => {
 
       setIsSubmitted(true);
       toast({
-        title: attendance === "attending" ? "See you there!" : "We'll miss you",
-        description: `Thank you for your response, ${selectedGuest.name}.`,
+        title: t("rsvp.success"),
+        description: t("rsvp.successMessage"),
       });
     } catch (err) {
       console.error('Failed to save RSVP:', err);
       toast({
-        title: "Couldn't save RSVP",
-        description: "Please try again in a moment.",
+        title: t("rsvp.error"),
+        description: t("rsvp.errorMessage"),
         variant: "destructive",
       });
     } finally {
@@ -134,12 +136,10 @@ const RSVPSection = () => {
             </div>
           </motion.div>
           <h2 className="text-3xl md:text-4xl font-display font-semibold text-foreground mb-4">
-            Thank You, {selectedGuest?.name}!
+            {t("rsvp.success")}, {selectedGuest?.name}!
           </h2>
           <p className="text-lg font-body text-muted-foreground">
-            {attendance === "attending"
-              ? "We're so excited to celebrate with you!"
-              : "We understand and will miss you on our special day."}
+            {t("rsvp.successMessage")}
           </p>
         </div>
       </section>
@@ -157,13 +157,13 @@ const RSVPSection = () => {
           className="text-center mb-12"
         >
           <p className="text-sm font-body text-gold uppercase tracking-[0.3em] mb-4">
-            Kindly Respond
+            {t("rsvp.subtitle")}
           </p>
           <h2 className="text-4xl md:text-5xl font-display font-semibold text-foreground mb-4">
-            RSVP
+            {t("rsvp.title")}
           </h2>
           <p className="text-lg font-body text-muted-foreground max-w-md mx-auto">
-            Please let us know if you'll be joining us on our special day
+            {t("rsvp.subtitle")}
           </p>
         </motion.div>
 
@@ -177,12 +177,12 @@ const RSVPSection = () => {
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Guest Search */}
               <div className="space-y-4">
-                <Label className="text-base font-display">Find Your Name</Label>
+                <Label className="text-base font-display">{t("rsvp.selectName")}</Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     type="text"
-                    placeholder="Search for your name..."
+                    placeholder={t("rsvp.searchPlaceholder")}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="font-body pl-10"
@@ -217,7 +217,7 @@ const RSVPSection = () => {
 
                 {searchQuery.length >= 2 && !isLoading && guests.length === 0 && (
                   <p className="text-sm text-muted-foreground font-body p-3 text-center border rounded-lg">
-                    No guests found matching "{searchQuery}"
+                    {t("rsvp.noGuestsFound")}
                   </p>
                 )}
 
@@ -238,7 +238,7 @@ const RSVPSection = () => {
 
               {/* Attendance Selection */}
               <div className="space-y-4">
-                <Label className="text-base font-display">Will You Attend?</Label>
+                <Label className="text-base font-display">{t("rsvp.selectName")}</Label>
                 <RadioGroup
                   value={attendance}
                   onValueChange={(value) => setAttendance(value as "attending" | "not-attending")}
@@ -254,7 +254,7 @@ const RSVPSection = () => {
                   >
                     <RadioGroupItem value="attending" id="attending" className="sr-only" />
                     <Check className={`w-8 h-8 ${attendance === "attending" ? "text-gold" : "text-muted-foreground"}`} />
-                    <span className="font-display font-medium">Joyfully Accept</span>
+                    <span className="font-display font-medium">{t("rsvp.attending")}</span>
                   </Label>
                   <Label
                     htmlFor="not-attending"
@@ -266,7 +266,7 @@ const RSVPSection = () => {
                   >
                     <RadioGroupItem value="not-attending" id="not-attending" className="sr-only" />
                     <X className={`w-8 h-8 ${attendance === "not-attending" ? "text-rose" : "text-muted-foreground"}`} />
-                    <span className="font-display font-medium">Regretfully Decline</span>
+                    <span className="font-display font-medium">{t("rsvp.notAttending")}</span>
                   </Label>
                 </RadioGroup>
               </div>
@@ -276,7 +276,7 @@ const RSVPSection = () => {
                 disabled={isSubmitting || !selectedGuest || !attendance}
                 className="w-full py-6 text-lg font-display bg-gold hover:bg-gold/90 text-primary-foreground"
               >
-                {isSubmitting ? "Sending..." : "Send Response"}
+                {isSubmitting ? t("rsvp.submitting") : t("rsvp.submit")}
               </Button>
             </form>
           </Card>

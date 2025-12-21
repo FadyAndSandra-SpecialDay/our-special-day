@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface CountdownTimerProps {
   targetDate: string;
@@ -13,6 +14,7 @@ interface TimeLeft {
 }
 
 const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
+  const { t } = useTranslation();
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
@@ -41,17 +43,17 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
   }, [targetDate]);
 
   const timeUnits = [
-    { label: "Days", value: timeLeft.days },
-    { label: "Hours", value: timeLeft.hours },
-    { label: "Minutes", value: timeLeft.minutes },
-    { label: "Seconds", value: timeLeft.seconds },
+    { label: t("hero.countdown.days"), value: timeLeft.days, key: "days" },
+    { label: t("hero.countdown.hours"), value: timeLeft.hours, key: "hours" },
+    { label: t("hero.countdown.minutes"), value: timeLeft.minutes, key: "minutes" },
+    { label: t("hero.countdown.seconds"), value: timeLeft.seconds, key: "seconds" },
   ];
 
   return (
     <div className="flex flex-wrap justify-center gap-4 md:gap-8">
       {timeUnits.map((unit, index) => (
         <motion.div
-          key={unit.label}
+          key={unit.key}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 + 0.5 }}

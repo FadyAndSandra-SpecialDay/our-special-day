@@ -1,0 +1,100 @@
+{
+  "nav": {
+    "home": "Home",
+    "rsvp": "RSVP",
+    "details": "Details",
+    "gallery": "Gallery",
+    "sharePhotos": "Share Photos"
+  },
+  "hero": {
+    "togetherWithFamilies": "Together with their families",
+    "invitation": "Request the pleasure of your company at the celebration of their marriage",
+    "countingDown": "Counting down to our special day",
+    "bride": "Fady",
+    "groom": "Sandra",
+    "bibleVerse": {
+      "text": "So they are no longer two, but one flesh. Therefore what God has joined together, let no one separate.",
+      "reference": "Matthew 19:6 NIV"
+    },
+    "countdown": {
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Minutes",
+      "seconds": "Seconds"
+    }
+  },
+  "rsvp": {
+    "title": "RSVP",
+    "subtitle": "Please confirm your attendance",
+    "searchPlaceholder": "Search for your name...",
+    "selectName": "Select your name from the list",
+    "attending": "Attending",
+    "notAttending": "Not Attending",
+    "submit": "Submit RSVP",
+    "submitting": "Submitting...",
+    "success": "Thank you!",
+    "successMessage": "Your RSVP has been received. We can't wait to celebrate with you!",
+    "error": "Couldn't save RSVP",
+    "errorMessage": "We couldn't save your RSVP. Please try again.",
+    "formIncomplete": "Please complete the form",
+    "formIncompleteMessage": "Select your name and confirm your attendance.",
+    "noGuestsFound": "No guests found",
+    "searchMinLength": "Type at least 2 characters to search"
+  },
+  "details": {
+    "joinUs": "Join Us",
+    "title": "Wedding Details",
+    "theDate": "The Date",
+    "churchCeremony": "Church Ceremony",
+    "churchName": "Saint Mary & Saint Athanasius Church",
+    "reception": "Reception",
+    "venueName": "Pyramids Park Resort Hotel",
+    "viewMap": "View Map"
+  },
+  "gallery": {
+    "ourMoments": "Our Moments",
+    "title": "Gallery",
+    "subtitle": "A glimpse into our journey together",
+    "loading": "Loading gallery...",
+    "error": "Unable to load gallery",
+    "errorMessage": "We couldn't load the gallery. Please try again later.",
+    "noPhotos": "No photos yet. Check back soon!"
+  },
+  "upload": {
+    "shareTheLove": "Share The Love",
+    "title": "Upload Your Photos",
+    "subtitle": "Help us capture every moment by sharing your photos from the celebration",
+    "dragDrop": "Drag & drop your photos here",
+    "orClick": "or click to browse • Max 10MB per file",
+    "selectPhotos": "Select Photos",
+    "uploading": "Uploading...",
+    "upload": "Upload Photos",
+    "uploadAll": "Upload All",
+    "photosReady": "{{count}} photo ready to upload",
+    "photosReadyPlural": "{{count}} photos ready to upload",
+    "photosUploaded": "{{count}} photo uploaded",
+    "photosUploadedPlural": "{{count}} photos uploaded",
+    "success": "Upload successful!",
+    "successMessage": "Your photos have been uploaded successfully.",
+    "error": "Upload failed",
+    "errorMessage": "We couldn't upload your photos. Please try again.",
+    "invalidFile": "Invalid file type",
+    "invalidFileMessage": "{{fileName}} is not an image file.",
+    "fileTooLarge": "File too large",
+    "fileTooLargeMessage": "{{fileName}} exceeds 10MB limit.",
+    "remove": "Remove",
+    "uploaded": "Uploaded",
+    "noFileChosen": "No file chosen"
+  },
+  "footer": {
+    "closing": "We can't wait to celebrate with you!",
+    "madeWithLove": "Made with love for our special day",
+    "copyright": "FSinvitation"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  }
+}
+

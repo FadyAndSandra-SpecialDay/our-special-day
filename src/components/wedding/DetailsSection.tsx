@@ -2,10 +2,12 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { weddingConfig } from "@/lib/weddingConfig";
 import { MapPin, Clock, Calendar, Church } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const DetailsSection = () => {
+  const { t, i18n } = useTranslation();
   const weddingDate = new Date(weddingConfig.weddingDate);
-  const formattedDate = weddingDate.toLocaleDateString("en-US", {
+  const formattedDate = weddingDate.toLocaleDateString(i18n.language === 'ar' ? 'ar-EG' : 'en-US', {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -23,10 +25,10 @@ const DetailsSection = () => {
           className="text-center mb-12"
         >
           <p className="text-sm font-body text-gold uppercase tracking-[0.3em] mb-4">
-            Join Us
+            {t("details.joinUs")}
           </p>
           <h2 className="text-4xl md:text-5xl font-display font-semibold text-foreground mb-4">
-            Wedding Details
+            {t("details.title")}
           </h2>
         </motion.div>
 
@@ -43,7 +45,7 @@ const DetailsSection = () => {
                 <Calendar className="w-7 h-7 text-gold" />
               </div>
               <h3 className="text-xl font-display font-medium text-foreground mb-2">
-                The Date
+                {t("details.theDate")}
               </h3>
               <p className="font-body text-muted-foreground">{formattedDate}</p>
             </Card>
@@ -61,11 +63,11 @@ const DetailsSection = () => {
                 <Church className="w-7 h-7 text-gold" />
               </div>
               <h3 className="text-xl font-display font-medium text-foreground mb-2">
-                Church Ceremony
+                {t("details.churchCeremony")}
               </h3>
               <p className="font-body text-gold font-medium">{weddingConfig.church.time}</p>
               <p className="font-body text-muted-foreground text-sm mt-1">
-                {weddingConfig.church.name}
+                {t("details.churchName")}
               </p>
               <a
                 href={weddingConfig.church.mapUrl}
@@ -73,7 +75,7 @@ const DetailsSection = () => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 mt-3 text-sm text-gold hover:underline font-body"
               >
-                <MapPin className="w-3 h-3" /> View Map
+                <MapPin className="w-3 h-3" /> {t("details.viewMap")}
               </a>
             </Card>
           </motion.div>
@@ -90,11 +92,11 @@ const DetailsSection = () => {
                 <Clock className="w-7 h-7 text-gold" />
               </div>
               <h3 className="text-xl font-display font-medium text-foreground mb-2">
-                Reception
+                {t("details.reception")}
               </h3>
               <p className="font-body text-gold font-medium">{weddingConfig.venue.time}</p>
               <p className="font-body text-muted-foreground text-sm mt-1">
-                {weddingConfig.venue.name}
+                {t("details.venueName")}
               </p>
               <a
                 href={weddingConfig.venue.mapUrl}
@@ -102,50 +104,11 @@ const DetailsSection = () => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 mt-3 text-sm text-gold hover:underline font-body"
               >
-                <MapPin className="w-3 h-3" /> View Map
+                <MapPin className="w-3 h-3" /> {t("details.viewMap")}
               </a>
             </Card>
           </motion.div>
         </div>
-
-        {/* Schedule */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <Card className="p-8 md:p-12 shadow-soft border-gold/10">
-            <h3 className="text-2xl font-display font-medium text-foreground text-center mb-8">
-              Schedule of Events
-            </h3>
-            <div className="max-w-2xl mx-auto">
-              {weddingConfig.schedule.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6 py-4 border-b border-border/50 last:border-0"
-                >
-                  <div className="flex-shrink-0 md:w-24 md:text-right">
-                    <span className="font-display font-medium text-gold">
-                      {item.time}
-                    </span>
-                  </div>
-                  <div className="flex-shrink-0 hidden md:block">
-                    <div className="w-3 h-3 rounded-full bg-gold/30 border-2 border-gold" />
-                  </div>
-                  <div className="flex-grow">
-                    <span className="font-body text-lg text-foreground">
-                      {item.event}
-                    </span>
-                    {'location' in item && (
-                      <p className="font-body text-sm text-muted-foreground">{item.location}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </motion.div>
       </div>
     </section>
   );

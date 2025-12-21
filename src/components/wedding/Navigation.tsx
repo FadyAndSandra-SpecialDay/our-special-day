@@ -2,16 +2,19 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { weddingConfig } from "@/lib/weddingConfig";
-
-const navItems = [
-  { label: "Home", href: "#home" },
-  { label: "RSVP", href: "#rsvp" },
-  { label: "Details", href: "#details" },
-  { label: "Gallery", href: "#gallery" },
-  { label: "Share Photos", href: "#upload" },
-];
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const Navigation = () => {
+  const { t } = useTranslation();
+  
+  const navItems = [
+    { label: t("nav.home"), href: "#home" },
+    { label: t("nav.rsvp"), href: "#rsvp" },
+    { label: t("nav.details"), href: "#details" },
+    { label: t("nav.gallery"), href: "#gallery" },
+    { label: t("nav.sharePhotos"), href: "#upload" },
+  ];
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -51,7 +54,7 @@ const Navigation = () => {
               onClick={() => scrollToSection("#home")}
               className="font-display text-xl md:text-2xl font-semibold text-foreground"
             >
-              {weddingConfig.bride} & {weddingConfig.groom}
+              {t("hero.bride")} & {t("hero.groom")}
             </button>
 
             {/* Desktop Navigation */}
@@ -65,6 +68,7 @@ const Navigation = () => {
                   {item.label}
                 </button>
               ))}
+              <LanguageSwitcher />
             </div>
 
             {/* Mobile Menu Button */}
@@ -90,7 +94,7 @@ const Navigation = () => {
             <div className="flex flex-col h-full p-6">
               <div className="flex justify-between items-center mb-12">
                 <span className="font-display text-xl font-semibold text-foreground">
-                  {weddingConfig.bride} & {weddingConfig.groom}
+                  {t("hero.bride")} & {t("hero.groom")}
                 </span>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -113,6 +117,9 @@ const Navigation = () => {
                     {item.label}
                   </motion.button>
                 ))}
+                <div className="pt-4">
+                  <LanguageSwitcher />
+                </div>
               </div>
             </div>
           </motion.div>

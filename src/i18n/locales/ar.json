@@ -1,0 +1,100 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "rsvp": "تأكيد الحضور",
+    "details": "التفاصيل",
+    "gallery": "معرض الصور",
+    "sharePhotos": "شارك الصور"
+  },
+  "hero": {
+    "togetherWithFamilies": "مع عائلاتهم",
+    "invitation": "نطلب شرف حضوركم للاحتفال بزواجهما",
+    "countingDown": "العد التنازلي ليومنا الخاص",
+    "bride": "فادى",
+    "groom": "ساندرا",
+    "bibleVerse": {
+      "text": "إِذًا لَيْسَا بَعْدُ اثْنَيْنِ بَلْ جَسَدٌ وَاحِدٌ. فَالَّذِي جَمَعَهُ اللهُ لاَ يُفَرِّقُهُ إِنْسَانٌ».",
+      "reference": "مت 19: 6"
+    },
+    "countdown": {
+      "days": "أيام",
+      "hours": "ساعات",
+      "minutes": "دقائق",
+      "seconds": "ثواني"
+    }
+  },
+  "rsvp": {
+    "title": "تأكيد الحضور",
+    "subtitle": "يرجى تأكيد حضورك",
+    "searchPlaceholder": "ابحث عن اسمك...",
+    "selectName": "اختر اسمك من القائمة",
+    "attending": "سأحضر",
+    "notAttending": "لن أحضر",
+    "submit": "إرسال التأكيد",
+    "submitting": "جاري الإرسال...",
+    "success": "شكراً لك!",
+    "successMessage": "تم استلام تأكيد حضورك. لا يمكننا الانتظار للاحتفال معك!",
+    "error": "فشل حفظ التأكيد",
+    "errorMessage": "لم نتمكن من حفظ تأكيد حضورك. يرجى المحاولة مرة أخرى.",
+    "formIncomplete": "يرجى إكمال النموذج",
+    "formIncompleteMessage": "اختر اسمك وأكد حضورك.",
+    "noGuestsFound": "لم يتم العثور على ضيوف",
+    "searchMinLength": "اكتب حرفين على الأقل للبحث"
+  },
+  "details": {
+    "joinUs": "انضم إلينا",
+    "title": "تفاصيل الزفاف",
+    "theDate": "التاريخ",
+    "churchCeremony": "مراسم الكنيسة",
+    "churchName": "كنيسة السيدة العذراء والقديس اثناسيوس الرسولي",
+    "reception": "الاستقبال",
+    "venueName": "فندق بيراميدز بارك ريزورت",
+    "viewMap": "عرض الخريطة"
+  },
+  "gallery": {
+    "ourMoments": "لحظاتنا",
+    "title": "معرض الصور",
+    "subtitle": "نظرة خاطفة على رحلتنا معاً",
+    "loading": "جاري تحميل المعرض...",
+    "error": "تعذر تحميل المعرض",
+    "errorMessage": "لم نتمكن من تحميل المعرض. يرجى المحاولة مرة أخرى لاحقاً.",
+    "noPhotos": "لا توجد صور بعد. تحقق مرة أخرى قريباً!"
+  },
+  "upload": {
+    "shareTheLove": "شارك الحب",
+    "title": "ارفع صورك",
+    "subtitle": "ساعدنا في التقاط كل لحظة من خلال مشاركة صورك من الاحتفال",
+    "dragDrop": "اسحب وأفلت صورك هنا",
+    "orClick": "أو انقر للتصفح • الحد الأقصى 10 ميجابايت لكل ملف",
+    "selectPhotos": "اختر الصور",
+    "uploading": "جاري الرفع...",
+    "upload": "رفع الصور",
+    "uploadAll": "رفع الكل",
+    "photosReady": "{{count}} صورة جاهزة للرفع",
+    "photosReadyPlural": "{{count}} صور جاهزة للرفع",
+    "photosUploaded": "{{count}} صورة تم رفعها",
+    "photosUploadedPlural": "{{count}} صور تم رفعها",
+    "success": "تم الرفع بنجاح!",
+    "successMessage": "تم رفع صورك بنجاح.",
+    "error": "فشل الرفع",
+    "errorMessage": "لم نتمكن من رفع صورك. يرجى المحاولة مرة أخرى.",
+    "invalidFile": "نوع ملف غير صالح",
+    "invalidFileMessage": "{{fileName}} ليس ملف صورة.",
+    "fileTooLarge": "الملف كبير جداً",
+    "fileTooLargeMessage": "{{fileName}} يتجاوز حد 10 ميجابايت.",
+    "remove": "إزالة",
+    "uploaded": "تم الرفع",
+    "noFileChosen": "لم يتم اختيار ملف"
+  },
+  "footer": {
+    "closing": "لا يمكننا الانتظار للاحتفال معك!",
+    "madeWithLove": "صنع بحب ليومنا الخاص",
+    "copyright": "FSinvitation"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجح"
+  }
+}
+

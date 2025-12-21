@@ -10,6 +10,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* RTL Support */
+[dir="rtl"] {
+  direction: rtl;
+}
+
+[dir="ltr"] {
+  direction: ltr;
+}
+
 @layer base {
   :root {
     /* Soft pastel wedding palette */

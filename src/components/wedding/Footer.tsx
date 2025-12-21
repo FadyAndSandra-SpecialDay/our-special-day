@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 import { weddingConfig } from "@/lib/weddingConfig";
 import { Heart } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className="py-16 px-4 border-t border-border/50">
       <div className="max-w-4xl mx-auto text-center">
@@ -20,15 +22,15 @@ const Footer = () => {
           </div>
 
           <h2 className="text-3xl md:text-4xl font-display font-semibold text-foreground mb-4">
-            {weddingConfig.bride} & {weddingConfig.groom}
+            {t("hero.bride")} & {t("hero.groom")}
           </h2>
 
           <p className="text-lg font-body text-muted-foreground mb-8 italic">
-            {weddingConfig.messages.closing}
+            {t("footer.closing")}
           </p>
 
           <p className="text-sm font-body text-muted-foreground">
-            Made with love for our special day
+            {t("footer.madeWithLove")}
           </p>
 
           <p className="text-xs font-body text-muted-foreground/60 mt-4">
