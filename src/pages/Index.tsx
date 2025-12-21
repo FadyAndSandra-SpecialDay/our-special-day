@@ -26,9 +26,9 @@ const Index = () => {
           <div id="home">
             <HeroSection />
           </div>
+          <RSVPSection />
           <DetailsSection />
           <GallerySection />
-          <RSVPSection />
           <PhotoUploadSection />
         </main>
 

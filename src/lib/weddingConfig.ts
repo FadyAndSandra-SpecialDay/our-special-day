@@ -1,8 +1,8 @@
 // Wedding Configuration - Edit these values to customize your invitation
 export const weddingConfig = {
   // Couple names (display order: Fady & Sandra)
-  bride: "Fady",
-  groom: "Sandra",
+  bride: "Eng.Fady",
+  groom: "Eng.Sandra",
   
   // Wedding date and time (ISO format)
   weddingDate: "2026-02-14T16:00:00",

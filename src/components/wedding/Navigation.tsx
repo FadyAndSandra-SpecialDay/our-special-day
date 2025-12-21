@@ -5,9 +5,9 @@ import { weddingConfig } from "@/lib/weddingConfig";
 
 const navItems = [
   { label: "Home", href: "#home" },
+  { label: "RSVP", href: "#rsvp" },
   { label: "Details", href: "#details" },
   { label: "Gallery", href: "#gallery" },
-  { label: "RSVP", href: "#rsvp" },
   { label: "Share Photos", href: "#upload" },
 ];
 
