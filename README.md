@@ -11,6 +11,14 @@ A beautiful wedding invitation website for Fady & Sandra's special day on Februa
 - 📤 Photo Upload for Guests
 - 📖 Bible Verse Display
 
+## 📚 Setup Guide
+
+**👉 Start here:** See **[COMPLETE_SETUP_GUIDE.md](./COMPLETE_SETUP_GUIDE.md)** for step-by-step instructions to set up:
+- Supabase project configuration
+- Google Cloud & Drive API setup
+- Service account and OAuth configuration
+- Photo upload feature setup
+
 ## Local Installation
 
 ### Prerequisites

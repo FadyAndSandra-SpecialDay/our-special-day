@@ -1,4 +1,4 @@
-project_id = "ccwfazfmmhinjttskhrr"
+project_id = "gosvleaijwscbrrnqkkt"
 
 [functions.get-guests]
 verify_jwt = false

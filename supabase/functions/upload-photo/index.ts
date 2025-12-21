@@ -5,8 +5,11 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Get access token for Google APIs.
+// Priority: 1) GOOGLE_SERVICE_ACCOUNT (works with regular Drive folders if shared with service account)
+//           2) OAuth refresh token (fallback)
 async function getAccessToken(scopes: string): Promise<string> {
-  // --- 1) Service Account flow (matches GOOGLE_DRIVE_SETUP.md using GOOGLE_SERVICE_ACCOUNT)
+  // --- 1) Service Account flow (PRIORITY - works with regular folders if shared with service account email)
   const serviceAccountRaw = (Deno.env.get('GOOGLE_SERVICE_ACCOUNT') ?? '').trim();
   if (serviceAccountRaw) {
     console.log('Using Service Account authentication via GOOGLE_SERVICE_ACCOUNT');
@@ -79,20 +82,21 @@ async function getAccessToken(scopes: string): Promise<string> {
     });
 
     const tokenData = await tokenResponse.json();
-    if (!tokenData.access_token) throw new Error(`Token error: ${JSON.stringify(tokenData)}`);
-    console.log('Service Account access token acquired');
+    if (!tokenData.access_token) {
+      console.error('Service Account token error:', JSON.stringify(tokenData));
+      throw new Error(`Token error: ${JSON.stringify(tokenData)}`);
+    }
+    console.log('Service Account token retrieved successfully');
     return tokenData.access_token as string;
   }
 
-  // --- 2) OAuth refresh-token flow (optional fallback – uses your Google account quota)
+  // --- 2) OAuth refresh-token flow (fallback - uses user's quota)
   const clientId = (Deno.env.get('GOOGLE_OAUTH_CLIENT_ID') ?? '').trim();
   const clientSecret = (Deno.env.get('GOOGLE_OAUTH_CLIENT_SECRET') ?? '').trim();
   const refreshToken = (Deno.env.get('GOOGLE_OAUTH_REFRESH_TOKEN') ?? '').trim();
 
   if (clientId && clientSecret && refreshToken) {
-    console.log(
-      `Refreshing OAuth access token... (clientIdLen=${clientId.length}, refreshTokenLen=${refreshToken.length})`
-    );
+    console.log('Falling back to OAuth refresh token flow...');
 
     const body = new URLSearchParams({
       client_id: clientId,
@@ -141,8 +145,7 @@ async function getAccessToken(scopes: string): Promise<string> {
   }
 
   throw new Error(
-    'Missing credentials: set GOOGLE_SERVICE_ACCOUNT (service account JSON or base64), ' +
-      'or GOOGLE_OAUTH_CLIENT_ID + GOOGLE_OAUTH_CLIENT_SECRET + GOOGLE_OAUTH_REFRESH_TOKEN'
+    'Missing credentials: need GOOGLE_SERVICE_ACCOUNT (preferred) or GOOGLE_OAUTH_CLIENT_ID + GOOGLE_OAUTH_CLIENT_SECRET + GOOGLE_OAUTH_REFRESH_TOKEN'
   );
 }
 
@@ -191,8 +194,11 @@ serve(async (req) => {
     console.log('File details:', { fileName, mimeType, folderId });
     console.log('Uploading file to Google Drive...');
 
-    const token = await getAccessToken('https://www.googleapis.com/auth/drive');
-    console.log('Access token retrieved successfully');
+    // Track which auth method we're using
+    const serviceAccountRaw = (Deno.env.get('GOOGLE_SERVICE_ACCOUNT') ?? '').trim();
+    let token = await getAccessToken('https://www.googleapis.com/auth/drive');
+    let usingServiceAccount = !!serviceAccountRaw;
+    console.log(`Access token retrieved successfully (using ${usingServiceAccount ? 'Service Account' : 'OAuth'})`);
 
     const boundary = '-------314159265358979323846';
     const metadata = { name: fileName, parents: [folderId] };
@@ -220,6 +226,117 @@ serve(async (req) => {
     if (!uploadResp.ok) {
       const errorText = await uploadResp.text();
       console.error('Drive upload error:', errorText);
+      
+      // Check if this is a service account quota error
+      let errorJson: any;
+      try {
+        errorJson = JSON.parse(errorText);
+      } catch {
+        errorJson = {};
+      }
+      
+      const isQuotaError = errorJson?.error?.errors?.some((e: any) => 
+        e.reason === 'storageQuotaExceeded' || 
+        errorText.includes('Service Accounts do not have storage quota') ||
+        errorText.includes('storageQuotaExceeded')
+      );
+      
+      // If using service account and got quota error, try OAuth fallback
+      if (isQuotaError && usingServiceAccount) {
+        console.log('Service account quota error detected. Attempting OAuth fallback...');
+        console.log('Checking for OAuth credentials...');
+        
+        // Temporarily clear service account to force OAuth
+        const originalServiceAccount = Deno.env.get('GOOGLE_SERVICE_ACCOUNT');
+        try {
+          // Try to get OAuth token by checking if OAuth credentials exist
+          const clientId = (Deno.env.get('GOOGLE_OAUTH_CLIENT_ID') ?? '').trim();
+          const clientSecret = (Deno.env.get('GOOGLE_OAUTH_CLIENT_SECRET') ?? '').trim();
+          const refreshToken = (Deno.env.get('GOOGLE_OAUTH_REFRESH_TOKEN') ?? '').trim();
+          
+          console.log(`OAuth check: clientId=${clientId ? 'SET' : 'MISSING'}, clientSecret=${clientSecret ? 'SET' : 'MISSING'}, refreshToken=${refreshToken ? 'SET' : 'MISSING'}`);
+          
+          if (clientId && clientSecret && refreshToken) {
+            console.log('OAuth credentials found, retrying with OAuth...');
+            
+            const body = new URLSearchParams({
+              client_id: clientId,
+              client_secret: clientSecret,
+              refresh_token: refreshToken,
+              grant_type: 'refresh_token',
+            }).toString();
+            
+            const tokenResp = await fetch('https://oauth2.googleapis.com/token', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body,
+            });
+            
+            if (tokenResp.ok) {
+              const tokenData = await tokenResp.json();
+              if (tokenData.access_token) {
+                const oauthToken = tokenData.access_token;
+                console.log('Retrying upload with OAuth token...');
+                
+                const retryResp = await fetch(uploadUrl, {
+                  method: 'POST',
+                  headers: { Authorization: `Bearer ${oauthToken}`, 'Content-Type': `multipart/related; boundary=${boundary}` },
+                  body: multipartRequestBody,
+                });
+                
+                if (retryResp.ok) {
+                  const result = await retryResp.json();
+                  console.log('File uploaded successfully with OAuth:', result);
+                  
+                  // Set public permission
+                  try {
+                    const permResp = await fetch(`https://www.googleapis.com/drive/v3/files/${result.id}/permissions`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oauthToken}` },
+                      body: JSON.stringify({ role: 'reader', type: 'anyone' }),
+                    });
+                    if (!permResp.ok) {
+                      const err = await permResp.text();
+                      console.warn('Could not set public permission:', err);
+                    }
+                  } catch (permErr) {
+                    console.warn('Permission setting error:', permErr);
+                  }
+                  
+                  const fullUrl = `https://drive.google.com/uc?export=view&id=${result.id}`;
+                  return new Response(JSON.stringify({ success: true, id: result.id, name: result.name, url: fullUrl }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+                } else {
+                  const retryError = await retryResp.text();
+                  console.error('OAuth retry also failed:', retryError);
+                }
+              }
+            }
+          } else {
+            throw new Error('OAuth credentials not configured. Service accounts cannot upload to regular Drive folders. Please set up OAuth refresh token or use a Shared Drive.');
+          }
+        } catch (oauthError) {
+          console.error('OAuth fallback failed:', oauthError);
+          // If OAuth fallback failed, provide helpful error message
+          if (isQuotaError) {
+            throw new Error(
+              'Service accounts cannot upload to regular Google Drive folders due to storage quota limitations. ' +
+              'OAuth fallback attempted but failed. ' +
+              'Solutions: 1) Set up OAuth refresh token properly (GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, GOOGLE_OAUTH_REFRESH_TOKEN) ' +
+              '2) Use a Shared Drive (Team Drive) instead of a regular folder. ' +
+              'See SETUP_OAUTH.md for detailed instructions.'
+            );
+          }
+        }
+      } else if (isQuotaError) {
+        // Quota error but not using service account (shouldn't happen, but handle it)
+        throw new Error(
+          'Google Drive storage quota error. ' +
+          'Service accounts cannot upload to regular Drive folders. ' +
+          'Please set up OAuth refresh token or use a Shared Drive. ' +
+          'See SETUP_OAUTH.md for instructions.'
+        );
+      }
+      
       const snippet = errorText.length > 1200 ? `${errorText.slice(0, 1200)}…` : errorText;
       throw new Error(`Drive upload failed (${uploadResp.status}): ${snippet}`);
     }
