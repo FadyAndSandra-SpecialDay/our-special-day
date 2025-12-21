@@ -272,47 +272,64 @@ serve(async (req) => {
               body,
             });
             
-            if (tokenResp.ok) {
-              const tokenData = await tokenResp.json();
-              if (tokenData.access_token) {
-                const oauthToken = tokenData.access_token;
-                console.log('Retrying upload with OAuth token...');
-                
-                const retryResp = await fetch(uploadUrl, {
+            if (!tokenResp.ok) {
+              const tokenErrorText = await tokenResp.text();
+              console.error('OAuth token refresh failed:', tokenResp.status, tokenErrorText);
+              throw new Error(
+                `OAuth token refresh failed (${tokenResp.status}): ${tokenErrorText}. ` +
+                'This may indicate an invalid or expired refresh token. Please generate a new refresh token.'
+              );
+            }
+            
+            const tokenData = await tokenResp.json();
+            if (!tokenData.access_token) {
+              console.error('OAuth token response missing access_token:', JSON.stringify(tokenData));
+              throw new Error(
+                'OAuth token refresh succeeded but no access_token in response. ' +
+                'Please check your OAuth credentials and try generating a new refresh token.'
+              );
+            }
+            
+            const oauthToken = tokenData.access_token;
+            console.log('Retrying upload with OAuth token...');
+            
+            const retryResp = await fetch(uploadUrl, {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${oauthToken}`, 'Content-Type': `multipart/related; boundary=${boundary}` },
+              body: multipartRequestBody,
+            });
+            
+            if (retryResp.ok) {
+              const result = await retryResp.json();
+              console.log('File uploaded successfully with OAuth:', result);
+              
+              // Set public permission
+              try {
+                const permResp = await fetch(`https://www.googleapis.com/drive/v3/files/${result.id}/permissions`, {
                   method: 'POST',
-                  headers: { Authorization: `Bearer ${oauthToken}`, 'Content-Type': `multipart/related; boundary=${boundary}` },
-                  body: multipartRequestBody,
+                  headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oauthToken}` },
+                  body: JSON.stringify({ role: 'reader', type: 'anyone' }),
                 });
-                
-                if (retryResp.ok) {
-                  const result = await retryResp.json();
-                  console.log('File uploaded successfully with OAuth:', result);
-                  
-                  // Set public permission
-                  try {
-                    const permResp = await fetch(`https://www.googleapis.com/drive/v3/files/${result.id}/permissions`, {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oauthToken}` },
-                      body: JSON.stringify({ role: 'reader', type: 'anyone' }),
-                    });
-                    if (!permResp.ok) {
-                      const err = await permResp.text();
-                      console.warn('Could not set public permission:', err);
-                    }
-                  } catch (permErr) {
-                    console.warn('Permission setting error:', permErr);
-                  }
-                  
-                  const fullUrl = `https://drive.google.com/uc?export=view&id=${result.id}`;
-                  return new Response(JSON.stringify({ success: true, id: result.id, name: result.name, url: fullUrl }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-                } else {
-                  const retryError = await retryResp.text();
-                  console.error('OAuth retry also failed:', retryError);
+                if (!permResp.ok) {
+                  const err = await permResp.text();
+                  console.warn('Could not set public permission:', err);
                 }
+              } catch (permErr) {
+                console.warn('Permission setting error:', permErr);
               }
+              
+              const fullUrl = `https://drive.google.com/uc?export=view&id=${result.id}`;
+              return new Response(JSON.stringify({ success: true, id: result.id, name: result.name, url: fullUrl }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+            } else {
+              const retryError = await retryResp.text();
+              console.error('OAuth retry upload failed:', retryResp.status, retryError);
+              throw new Error(
+                `OAuth upload retry failed (${retryResp.status}): ${retryError}. ` +
+                'OAuth token was obtained but upload still failed.'
+              );
             }
           } else {
-            throw new Error('OAuth credentials not configured. Service accounts cannot upload to regular Drive folders. Please set up OAuth refresh token or use a Shared Drive.');
+            throw new Error('OAuth credentials not configured. Service accounts cannot upload to regular Drive folders. Please set up OAuth refresh token (GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, GOOGLE_OAUTH_REFRESH_TOKEN) or use a Shared Drive.');
           }
         } catch (oauthError) {
           console.error('OAuth fallback failed:', oauthError);

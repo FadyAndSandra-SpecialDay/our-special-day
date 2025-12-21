@@ -15,8 +15,9 @@ wedding-photo-upload@wedding-photo-upload-481609.iam.gserviceaccount.com
 
 **Google Drive API Key:**
 ```
-AQ.Ab8RN6JD2wANPAAA_J0owfR4RLfBKcGa-NucGF5CRCVKZGfIxw
+YOUR_API_KEY_HERE
 ```
+**Note:** Replace with your actual API key from Google Cloud Console if needed. For most use cases, the service account JSON is sufficient.
 
 ## Important Notes
 

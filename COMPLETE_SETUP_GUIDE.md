@@ -48,8 +48,8 @@ Your project is already connected to: **gosvleaijwscbrrnqkkt**
 
 **Your Configuration:**
 - **Service Account Email**: `wedding-photo-upload@wedding-photo-upload-481609.iam.gserviceaccount.com`
-- **API Key**: `AQ.Ab8RN6JD2wANPAAA_J0owfR4RLfBKcGa-NucGF5CRCVKZGfIxw`
-  - Note: For the upload feature, we primarily use the service account JSON file for authentication. The API key may be used for API restrictions or other services.
+- **API Key**: (Optional - only needed for API restrictions)
+  - Note: For the upload feature, we primarily use the service account JSON file for authentication. The API key is optional and only needed if you set up API restrictions.
 
 ---
 

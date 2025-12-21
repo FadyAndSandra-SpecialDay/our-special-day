@@ -12,6 +12,18 @@ dist
 dist-ssr
 *.local
 
+# Environment variables
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Service account JSON files (contains sensitive credentials)
+*-*.json
+*service-account*.json
+*credentials*.json
+gen-lang-client-*.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
