@@ -162,24 +162,48 @@ const PhotoUploadSection = () => {
   const uploadedFiles = files.filter((f) => f.status === "success");
 
   return (
-    <section id="upload" className="py-20 px-4 bg-secondary/30">
-      <div className="max-w-4xl mx-auto">
+    <section id="upload" className="py-24 px-4 bg-secondary/30 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blush/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="max-w-4xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <p className="text-sm font-body text-gold uppercase tracking-[0.3em] mb-4">
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-sm font-body text-gold uppercase tracking-[0.3em] mb-4"
+          >
             {t("upload.shareTheLove")}
-          </p>
-          <h2 className="text-4xl md:text-5xl font-display font-semibold text-foreground mb-4">
+          </motion.p>
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold text-foreground mb-4"
+          >
             {t("upload.title")}
-          </h2>
-          <p className="text-lg font-body text-muted-foreground max-w-md mx-auto">
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-lg font-body text-muted-foreground max-w-md mx-auto"
+          >
             {t("upload.subtitle")}
-          </p>
+          </motion.p>
         </motion.div>
 
         <motion.div
@@ -188,16 +212,16 @@ const PhotoUploadSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <Card className="p-8 shadow-soft border-gold/10">
+          <Card className="p-8 lg:p-10 shadow-soft border-gold/10 bg-card/80 backdrop-blur-sm">
             {/* Drop Zone */}
             <div
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
-              className={`relative border-2 border-dashed rounded-lg p-12 text-center transition-all ${
+              className={`relative border-2 border-dashed rounded-xl p-12 text-center transition-all duration-300 ${
                 isDragging
-                  ? "border-gold bg-gold/5"
-                  : "border-border hover:border-gold/50"
+                  ? "border-gold bg-gold/10 shadow-glow scale-[1.02]"
+                  : "border-border hover:border-gold/50 hover:bg-gold/5"
               }`}
             >
               <input
@@ -209,9 +233,13 @@ const PhotoUploadSection = () => {
               />
 
               <div className="flex flex-col items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center">
-                  <Camera className="w-8 h-8 text-gold" />
-                </div>
+                <motion.div
+                  animate={isDragging ? { scale: 1.1, rotate: 5 } : { scale: 1, rotate: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-20 h-20 rounded-full bg-gold/10 flex items-center justify-center"
+                >
+                  <Camera className="w-10 h-10 text-gold" />
+                </motion.div>
                 <div>
                   <p className="text-lg font-display font-medium text-foreground mb-1">
                     {t("upload.dragDrop")}

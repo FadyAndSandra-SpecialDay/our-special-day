@@ -6,8 +6,13 @@ import { useTranslation } from "react-i18next";
 const Footer = () => {
   const { t } = useTranslation();
   return (
-    <footer className="py-16 px-4 border-t border-border/50">
-      <div className="max-w-4xl mx-auto text-center">
+    <footer className="py-20 px-4 border-t border-border/50 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-gold/3 rounded-full blur-3xl" />
+      </div>
+
+      <div className="max-w-4xl mx-auto text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -15,25 +20,30 @@ const Footer = () => {
           transition={{ duration: 0.6 }}
         >
           {/* Decorative element */}
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <div className="w-16 h-px bg-gradient-to-r from-transparent to-gold/50" />
-            <Heart className="w-5 h-5 text-gold fill-gold/30" />
-            <div className="w-16 h-px bg-gradient-to-l from-transparent to-gold/50" />
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="w-20 h-px bg-gradient-to-r from-transparent to-gold/50" />
+            <motion.div
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            >
+              <Heart className="w-6 h-6 text-gold fill-gold/30" />
+            </motion.div>
+            <div className="w-20 h-px bg-gradient-to-l from-transparent to-gold/50" />
           </div>
 
-          <h2 className="text-3xl md:text-4xl font-display font-semibold text-foreground mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-semibold text-foreground mb-6">
             {t("hero.bride")} & {t("hero.groom")}
           </h2>
 
-          <p className="text-lg font-body text-muted-foreground mb-8 italic">
+          <p className="text-lg font-body text-muted-foreground mb-10 italic max-w-2xl mx-auto">
             {t("footer.closing")}
           </p>
 
-          <p className="text-sm font-body text-muted-foreground">
+          <p className="text-sm font-body text-muted-foreground mb-4">
             {t("footer.madeWithLove")}
           </p>
 
-          <p className="text-xs font-body text-muted-foreground/60 mt-4">
+          <p className="text-xs font-body text-muted-foreground/60 mt-6">
             FSinvitation © {new Date().getFullYear()}
           </p>
         </motion.div>

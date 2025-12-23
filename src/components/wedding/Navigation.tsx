@@ -41,9 +41,9 @@ const Navigation = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6 }}
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
           isScrolled
-            ? "bg-background/95 backdrop-blur-sm shadow-soft"
+            ? "bg-background/95 backdrop-blur-md shadow-soft border-b border-gold/10"
             : "bg-transparent"
         }`}
       >
@@ -63,9 +63,10 @@ const Navigation = () => {
                 <button
                   key={item.href}
                   onClick={() => scrollToSection(item.href)}
-                  className="font-body text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+                  className="font-body text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-all duration-300 relative group"
                 >
                   {item.label}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full" />
                 </button>
               ))}
               <LanguageSwitcher />

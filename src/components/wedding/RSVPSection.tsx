@@ -124,47 +124,87 @@ const RSVPSection = () => {
 
   if (isSubmitted) {
     return (
-      <section id="rsvp" className="py-20 px-4 bg-secondary/30">
-        <div className="max-w-2xl mx-auto text-center">
+      <section id="rsvp" className="py-24 px-4 bg-secondary/30 relative overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-rose/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-sage/5 rounded-full blur-3xl" />
+        </div>
+
+        <div className="max-w-2xl mx-auto text-center relative z-10">
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 200 }}
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 200, damping: 15 }}
           >
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gold/20 flex items-center justify-center">
-              <Check className="w-10 h-10 text-gold" />
+            <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-gold/20 flex items-center justify-center shadow-glow">
+              <Check className="w-12 h-12 text-gold" />
             </div>
           </motion.div>
-          <h2 className="text-3xl md:text-4xl font-display font-semibold text-foreground mb-4">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-3xl md:text-4xl lg:text-5xl font-display font-semibold text-foreground mb-6"
+          >
             {t("rsvp.success")}, {selectedGuest?.name}!
-          </h2>
-          <p className="text-lg font-body text-muted-foreground">
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-lg font-body text-muted-foreground"
+          >
             {t("rsvp.successMessage")}
-          </p>
+          </motion.p>
         </div>
       </section>
     );
   }
 
   return (
-    <section id="rsvp" className="py-20 px-4 bg-secondary/30">
-      <div className="max-w-2xl mx-auto">
+    <section id="rsvp" className="py-24 px-4 bg-secondary/30 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-rose/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-sage/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="max-w-2xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <p className="text-sm font-body text-gold uppercase tracking-[0.3em] mb-4">
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-sm font-body text-gold uppercase tracking-[0.3em] mb-4"
+          >
             {t("rsvp.subtitle")}
-          </p>
-          <h2 className="text-4xl md:text-5xl font-display font-semibold text-foreground mb-4">
+          </motion.p>
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold text-foreground mb-4"
+          >
             {t("rsvp.title")}
-          </h2>
-          <p className="text-lg font-body text-muted-foreground max-w-md mx-auto">
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-lg font-body text-muted-foreground max-w-md mx-auto"
+          >
             {t("rsvp.subtitle")}
-          </p>
+          </motion.p>
         </motion.div>
 
         <motion.div
@@ -173,7 +213,7 @@ const RSVPSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <Card className="p-8 shadow-soft border-gold/10">
+          <Card className="p-8 lg:p-10 shadow-soft border-gold/10 bg-card/80 backdrop-blur-sm">
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Guest Search */}
               <div className="space-y-4">
