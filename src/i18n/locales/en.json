@@ -28,6 +28,7 @@
     "subtitle": "Please confirm your attendance",
     "searchPlaceholder": "Search for your name...",
     "selectName": "Select your name from the list",
+    "confirmAttendance": "Confirm your attendance",
     "attending": "Attending",
     "notAttending": "Not Attending",
     "submit": "Submit RSVP",

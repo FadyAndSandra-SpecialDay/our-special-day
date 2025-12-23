@@ -37,6 +37,10 @@ export const weddingConfig = {
   // Google Drive folder for gallery images
   galleryFolderId: "1l4IlQOJ5z7tA-Nn3_T3zsJHVAzPRrE2D",
 
+  // Background music URL (add your music file URL here)
+  // You can upload to Google Drive, SoundCloud, or any hosting service
+  backgroundMusicUrl: "", // Add your music URL here, e.g., "https://example.com/music.mp3"
+
   // Bible verse
   bibleVerse: {
     text: "So they are no longer two, but one flesh. Therefore what God has joined together, let no one separate.",

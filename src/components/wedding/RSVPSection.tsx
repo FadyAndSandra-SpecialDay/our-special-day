@@ -196,15 +196,6 @@ const RSVPSection = () => {
           >
             {t("rsvp.title")}
           </motion.h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-lg font-body text-muted-foreground max-w-md mx-auto"
-          >
-            {t("rsvp.subtitle")}
-          </motion.p>
         </motion.div>
 
         <motion.div
@@ -278,7 +269,7 @@ const RSVPSection = () => {
 
               {/* Attendance Selection */}
               <div className="space-y-4">
-                <Label className="text-base font-display">{t("rsvp.selectName")}</Label>
+                <Label className="text-base font-display">{t("rsvp.confirmAttendance")}</Label>
                 <RadioGroup
                   value={attendance}
                   onValueChange={(value) => setAttendance(value as "attending" | "not-attending")}

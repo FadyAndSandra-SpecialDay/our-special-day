@@ -6,6 +6,8 @@ import GallerySection from "@/components/wedding/GallerySection";
 import RSVPSection from "@/components/wedding/RSVPSection";
 import PhotoUploadSection from "@/components/wedding/PhotoUploadSection";
 import Footer from "@/components/wedding/Footer";
+import BackgroundMusic from "@/components/wedding/BackgroundMusic";
+import { weddingConfig } from "@/lib/weddingConfig";
 import { useTranslation } from "react-i18next";
 
 const Index = () => {
@@ -34,6 +36,11 @@ const Index = () => {
         </main>
 
         <Footer />
+        
+        {/* Background Music */}
+        {weddingConfig.backgroundMusicUrl && (
+          <BackgroundMusic src={weddingConfig.backgroundMusicUrl} volume={0.3} />
+        )}
       </div>
     </>
   );

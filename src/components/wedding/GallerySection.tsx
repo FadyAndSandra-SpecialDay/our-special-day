@@ -31,7 +31,12 @@ const GallerySection = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const autoplay = useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: false })
+    Autoplay({ 
+      delay: 4000, 
+      stopOnInteraction: false,
+      stopOnMouseEnter: false,
+      stopOnFocusIn: false,
+    })
   );
 
   useEffect(() => {
