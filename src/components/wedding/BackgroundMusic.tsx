@@ -42,12 +42,13 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Set volume - but don't force muted state here (let attemptAutoPlay handle it)
-    if (!isMuted) {
-      audio.volume = volume;
-    } else {
-      audio.volume = 0;
+    // Ensure audio is muted for HTML autoplay to work (browsers allow muted autoplay)
+    if (startMuted) {
+      audio.muted = true;
     }
+    
+    // Set volume
+    audio.volume = isMuted ? 0 : volume;
     
     // Reset any previous errors
     setError(null);
@@ -139,65 +140,38 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
     const ext = filename.toLowerCase().split('.').pop();
     console.log(`🎵 Loading audio: ${currentSong} (format: ${ext})`);
     
-    // Function to attempt auto-play
-    // Strategy: Start muted (browsers allow muted autoplay), then unmute after starting
-    const attemptAutoPlay = async () => {
+    // Function to check if HTML autoplay worked
+    // We rely ONLY on HTML autoplay + muted attributes (browsers allow this)
+    // We DON'T use programmatic play() - browsers block it until user interaction
+    const checkAutoplayStatus = () => {
       if (!audio) return;
-      if (audio.paused && audio.readyState >= 2) {
-        try {
-          // Try to play muted first (browsers allow muted autoplay)
-          const wasMuted = audio.muted;
-          if (!audio.muted) {
-            audio.muted = true;
-          }
-          
-          await audio.play();
-          setIsPlaying(true);
-          console.log("🎵 ✅ Audio auto-played successfully (muted initially)!");
-          
-          // Unmute after a brief moment (browsers allow this after play starts)
-          setTimeout(() => {
-            if (audio && !wasMuted) {
-              audio.muted = false;
-              setIsMuted(false);
-              console.log("🎵 🔊 Audio unmuted!");
-            }
-          }, 500);
-          
-          setError(null);
-        } catch (error) {
-          // Auto-play was blocked even when muted - try unmuted as fallback
-          console.log("⚠️ Muted auto-play blocked, trying unmuted...");
-          try {
-            audio.muted = false;
-            await audio.play();
-            setIsPlaying(true);
-            setIsMuted(false);
-            console.log("🎵 ✅ Audio auto-played successfully (unmuted)!");
-            setError(null);
-          } catch (error2) {
-            // Auto-play was blocked by browser
-            console.log("⚠️ Auto-play blocked by browser, waiting for user interaction");
-            console.log("   (This is normal - browsers block auto-play until user interacts)");
-          }
-        }
+      
+      // Check if HTML autoplay worked (audio is playing)
+      if (!audio.paused) {
+        console.log("🎵 ✅ HTML autoplay worked! Audio is playing automatically.");
+        setIsPlaying(true);
+      } else {
+        // HTML autoplay was blocked by browser
+        // This is normal - audio will start when user interacts
+        console.log("ℹ️ HTML autoplay blocked by browser (normal behavior)");
+        console.log("   Audio will start automatically when user clicks/touches the page");
       }
     };
     
     // Add canplaythrough listener to verify file is valid
-    // Note: We rely on HTML autoplay attribute primarily, but try programmatic as fallback
+    // Note: We rely on HTML autoplay + muted attributes (browsers allow this)
     const handleCanPlay = () => {
       console.log(`✅ Audio file is valid and ready: ${currentSong}`);
       setError(null);
-      // HTML autoplay should handle it, but try programmatic as fallback
-      attemptAutoPlay();
+      // Check if HTML autoplay worked (it should start automatically with muted attribute)
+      setTimeout(() => checkAutoplayStatus(), 100);
     };
     
     const handleCanPlayThrough = () => {
       // Audio is fully loaded and can play through
       console.log(`✅ Audio fully loaded: ${currentSong}`);
-      // HTML autoplay should handle it, but try programmatic as fallback
-      attemptAutoPlay();
+      // Check if HTML autoplay worked
+      setTimeout(() => checkAutoplayStatus(), 100);
     };
     
     const handleLoadStart = () => {
@@ -210,22 +184,14 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
     
     audio.load();
 
-    // Try auto-play immediately if audio is already loaded
-    if (audio.readyState >= 2) {
-      console.log("🎵 Audio already loaded, attempting auto-play immediately...");
-      attemptAutoPlay();
-    }
-    
-    // Also try auto-play after delays as fallback (in case events don't fire)
+    // Check if HTML autoplay worked after a brief delay
     const timer1 = setTimeout(() => {
-      console.log("🎵 Attempting auto-play (fallback 1s)...");
-      attemptAutoPlay();
-    }, 1000);
+      checkAutoplayStatus();
+    }, 500);
     
     const timer2 = setTimeout(() => {
-      console.log("🎵 Attempting auto-play (fallback 2s)...");
-      attemptAutoPlay();
-    }, 2000);
+      checkAutoplayStatus();
+    }, 1500);
 
     // Play on first user interaction if auto-play was blocked
     const handleFirstInteraction = async () => {
