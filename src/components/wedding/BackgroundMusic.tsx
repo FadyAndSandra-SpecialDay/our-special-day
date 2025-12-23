@@ -16,6 +16,7 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
   const [error, setError] = useState<string | null>(null);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [playlist, setPlaylist] = useState<string[]>([]);
+  const [startMuted, setStartMuted] = useState(true); // Start muted for autoplay
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // Initialize playlist
@@ -30,6 +31,7 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
     
     setPlaylist(processedPlaylist);
     setCurrentSongIndex(0);
+    setStartMuted(true); // Reset to muted when playlist changes
   }, [src, shuffle]);
 
   const currentSong = playlist[currentSongIndex];
@@ -99,6 +101,18 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
     const handlePlay = () => {
       setIsPlaying(true);
       setError(null);
+      
+      // If audio started muted for autoplay, unmute it now
+      if (startMuted && audio.muted) {
+        setTimeout(() => {
+          if (audio) {
+            audio.muted = false;
+            setIsMuted(false);
+            setStartMuted(false);
+            console.log("🎵 🔊 Audio unmuted after autoplay!");
+          }
+        }, 300);
+      }
     };
     
     const handlePause = () => setIsPlaying(false);
@@ -170,18 +184,19 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
       }
     };
     
-    // Add canplaythrough listener to verify file is valid and trigger auto-play
+    // Add canplaythrough listener to verify file is valid
+    // Note: We rely on HTML autoplay attribute primarily, but try programmatic as fallback
     const handleCanPlay = () => {
       console.log(`✅ Audio file is valid and ready: ${currentSong}`);
       setError(null);
-      // Try to auto-play when audio can play
+      // HTML autoplay should handle it, but try programmatic as fallback
       attemptAutoPlay();
     };
     
     const handleCanPlayThrough = () => {
       // Audio is fully loaded and can play through
       console.log(`✅ Audio fully loaded: ${currentSong}`);
-      // Try to auto-play when fully loaded
+      // HTML autoplay should handle it, but try programmatic as fallback
       attemptAutoPlay();
     };
     
@@ -287,6 +302,7 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
         ref={audioRef}
         preload="auto"
         autoPlay
+        muted={startMuted}
       >
         {/* Use source element for better format detection */}
         {currentSong && (() => {
