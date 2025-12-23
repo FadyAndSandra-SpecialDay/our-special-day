@@ -84,7 +84,9 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
     audio.addEventListener("pause", handlePause);
 
     // Load the current song
+    // Handle Google Drive links that might return HTML instead of audio
     audio.src = currentSong;
+    audio.crossOrigin = "anonymous"; // Help with CORS if needed
     audio.load();
 
     // Auto-play on mount (with user interaction fallback)

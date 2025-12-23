@@ -37,40 +37,17 @@ export const weddingConfig = {
   // Google Drive folder for gallery images
   galleryFolderId: "1l4IlQOJ5z7tA-Nn3_T3zsJHVAzPRrE2D",
 
-  // Background music - RECOMMENDED: Use direct audio file URLs for best performance
+  // Background music - AUTO-DETECTED from public/music/ folder
   // 
-  // Your Google Drive folder: https://drive.google.com/drive/u/1/folders/1oNv7irFHp1N-F2WnexkXZIhPzbBktsez
+  // 🎵 AUTOMATIC SETUP:
+  // 1. Add MP3 files to public/music/ folder
+  // 2. Run: npm run generate-music (or it runs automatically on build)
+  // 3. All MP3 files will be automatically included!
   //
-  // TO GET FILE URLs FROM YOUR DRIVE FOLDER:
-  // 1. Right-click each MP3 file > Share > Copy link
-  // 2. Extract FILE_ID from: https://drive.google.com/file/d/FILE_ID/view
-  // 3. Convert to: https://drive.google.com/uc?export=download&id=FILE_ID
-  // 4. Add to the array below
+  // The music list is auto-generated from public/music/ folder
+  // No need to manually update this config when adding new songs!
   //
-  // OPTION 1: Single song (string)
-  //   backgroundMusicUrl: "https://drive.google.com/uc?export=download&id=FILE_ID",
-  //
-  // OPTION 2: Playlist (array of URLs) - Recommended! 
-  //   Songs will play in sequence or shuffled randomly
-  //   Add all your MP3 files from the Drive folder here:
-  //
-  backgroundMusicUrl: [
-    // Your Google Drive MP3 files
-    // IMPORTANT: Make sure files are set to "Anyone with the link can view" in Google Drive
-    // Try format 1 (standard):
-    "https://drive.google.com/uc?export=download&id=1oLEntHRZOpVdKtG1-jY48BApgHNO7cHB",
-    "https://drive.google.com/uc?export=download&id=1SwK1l8AoVfRS3iy6oQBQDvuZ4s9WyAt7",
-    
-    // If format 1 doesn't work, try format 2 (alternative):
-    // "https://drive.google.com/uc?id=1oLEntHRZOpVdKtG1-jY48BApgHNO7cHB&export=download",
-    // "https://drive.google.com/uc?id=1SwK1l8AoVfRS3iy6oQBQDvuZ4s9WyAt7&export=download",
-    
-    // Or format 3 (with confirm parameter to bypass virus scan):
-    // "https://drive.google.com/uc?export=download&id=1oLEntHRZOpVdKtG1-jY48BApgHNO7cHB&confirm=t",
-    // "https://drive.google.com/uc?export=download&id=1SwK1l8AoVfRS3iy6oQBQDvuZ4s9WyAt7&confirm=t",
-    
-    // Add more files here as needed
-  ] as string[] | string,
+  backgroundMusicUrl: [] as string[] | string, // Will be populated automatically
   
   // Shuffle playlist: true = random order, false = play in order
   backgroundMusicShuffle: true,

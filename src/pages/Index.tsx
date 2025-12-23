@@ -8,6 +8,7 @@ import PhotoUploadSection from "@/components/wedding/PhotoUploadSection";
 import Footer from "@/components/wedding/Footer";
 import BackgroundMusic from "@/components/wedding/BackgroundMusic";
 import { weddingConfig } from "@/lib/weddingConfig";
+import musicFiles from "@/lib/musicList";
 import { useTranslation } from "react-i18next";
 
 const Index = () => {
@@ -38,12 +39,17 @@ const Index = () => {
         <Footer />
         
         {/* Background Music */}
-        {(weddingConfig.backgroundMusicUrl && 
-          (Array.isArray(weddingConfig.backgroundMusicUrl) 
-            ? weddingConfig.backgroundMusicUrl.length > 0 
-            : weddingConfig.backgroundMusicUrl)) && (
+        {/* Auto-detect music from public/music/ folder - automatically includes all MP3 files */}
+        {(musicFiles.length > 0 || 
+          (weddingConfig.backgroundMusicUrl && 
+            (Array.isArray(weddingConfig.backgroundMusicUrl) 
+              ? weddingConfig.backgroundMusicUrl.length > 0 
+              : weddingConfig.backgroundMusicUrl))) && (
           <BackgroundMusic 
-            src={weddingConfig.backgroundMusicUrl} 
+            src={musicFiles.length > 0 ? musicFiles : 
+              (Array.isArray(weddingConfig.backgroundMusicUrl) 
+                ? weddingConfig.backgroundMusicUrl 
+                : [weddingConfig.backgroundMusicUrl])} 
             volume={0.3}
             shuffle={weddingConfig.backgroundMusicShuffle}
             type={weddingConfig.backgroundMusicType}
