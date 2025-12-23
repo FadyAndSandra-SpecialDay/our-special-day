@@ -121,37 +121,36 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
     const ext = filename.toLowerCase().split('.').pop();
     console.log(`🎵 Loading audio: ${currentSong} (format: ${ext})`);
     
+    // Function to attempt auto-play
+    const attemptAutoPlay = async () => {
+      if (!audio) return;
+      if (audio.paused && audio.readyState >= 2) {
+        try {
+          await audio.play();
+          setIsPlaying(true);
+          console.log("🎵 ✅ Audio auto-played successfully!");
+          setError(null);
+        } catch (error) {
+          // Auto-play was blocked by browser
+          console.log("⚠️ Auto-play blocked by browser, waiting for user interaction");
+          console.log("   (This is normal - browsers block auto-play until user interacts)");
+        }
+      }
+    };
+    
     // Add canplaythrough listener to verify file is valid and trigger auto-play
     const handleCanPlay = () => {
       console.log(`✅ Audio file is valid and ready: ${currentSong}`);
       setError(null);
-      
-      // Auto-play when audio is ready
-      if (audio.paused && !isPlaying) {
-        audio.play().then(() => {
-          setIsPlaying(true);
-          console.log("🎵 Audio auto-played successfully");
-        }).catch((error) => {
-          // Auto-play was blocked by browser (common on first load)
-          console.log("⚠️ Auto-play blocked by browser, waiting for user interaction");
-        });
-      }
+      // Try to auto-play when audio can play
+      attemptAutoPlay();
     };
     
     const handleCanPlayThrough = () => {
       // Audio is fully loaded and can play through
       console.log(`✅ Audio fully loaded: ${currentSong}`);
-      
-      // Try to auto-play if not already playing
-      if (audio.paused && !isPlaying) {
-        audio.play().then(() => {
-          setIsPlaying(true);
-          console.log("🎵 Audio auto-played successfully");
-        }).catch((error) => {
-          // Auto-play blocked, will wait for user interaction
-          console.log("⚠️ Auto-play blocked, will start on user interaction");
-        });
-      }
+      // Try to auto-play when fully loaded
+      attemptAutoPlay();
     };
     
     const handleLoadStart = () => {
@@ -164,42 +163,45 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
     
     audio.load();
 
-    // Also try auto-play after a short delay as fallback (in case events don't fire)
-    const timer = setTimeout(async () => {
-      if (audio.paused && !isPlaying && audio.readyState >= 2) {
-        try {
-          await audio.play();
-          setIsPlaying(true);
-          console.log("🎵 Audio auto-played via timer fallback");
-        } catch (error) {
-          console.log("⚠️ Auto-play blocked, waiting for user interaction");
-        }
-      }
+    // Try auto-play immediately if audio is already loaded
+    if (audio.readyState >= 2) {
+      console.log("🎵 Audio already loaded, attempting auto-play immediately...");
+      attemptAutoPlay();
+    }
+    
+    // Also try auto-play after delays as fallback (in case events don't fire)
+    const timer1 = setTimeout(() => {
+      console.log("🎵 Attempting auto-play (fallback 1s)...");
+      attemptAutoPlay();
     }, 1000);
+    
+    const timer2 = setTimeout(() => {
+      console.log("🎵 Attempting auto-play (fallback 2s)...");
+      attemptAutoPlay();
+    }, 2000);
 
     // Play on first user interaction if auto-play was blocked
     const handleFirstInteraction = async () => {
-      if (!isPlaying && audio.paused) {
+      if (audio.paused) {
         try {
           await audio.play();
           setIsPlaying(true);
           setError(null);
+          console.log("🎵 Audio started on user interaction");
         } catch (error) {
           console.error("Failed to play audio:", error);
           setError("Could not play audio. Browser may require user interaction.");
         }
       }
-      document.removeEventListener("click", handleFirstInteraction);
-      document.removeEventListener("touchstart", handleFirstInteraction);
     };
 
-    document.addEventListener("click", handleFirstInteraction);
-    document.addEventListener("touchstart", handleFirstInteraction);
+    // Add listeners for user interaction (only once per mount)
+    document.addEventListener("click", handleFirstInteraction, { once: true });
+    document.addEventListener("touchstart", handleFirstInteraction, { once: true });
 
     return () => {
-      clearTimeout(timer);
-      document.removeEventListener("click", handleFirstInteraction);
-      document.removeEventListener("touchstart", handleFirstInteraction);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
       audio.removeEventListener("error", handleError);
       audio.removeEventListener("ended", handleEnded);
       audio.removeEventListener("play", handlePlay);

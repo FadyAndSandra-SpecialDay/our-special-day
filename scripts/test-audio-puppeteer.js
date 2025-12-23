@@ -60,6 +60,8 @@ async function testAudioPlayback() {
           message: audio.error.message,
         } : null,
         paused: audio.paused,
+        playing: !audio.paused,
+        currentTime: audio.currentTime,
         autoplay: audio.autoplay,
         preload: audio.preload,
         sources: Array.from(audio.querySelectorAll('source')).map(src => ({
@@ -80,6 +82,8 @@ async function testAudioPlayback() {
     console.log(`   Ready State: ${audioElements.readyState} (0=nothing, 1=metadata, 2=current data, 3=future data, 4=enough data)`);
     console.log(`   Network State: ${audioElements.networkState} (0=empty, 1=idle, 2=loading, 3=no source)`);
     console.log(`   Paused: ${audioElements.paused}`);
+    console.log(`   Playing: ${audioElements.playing}`);
+    console.log(`   Current Time: ${audioElements.currentTime?.toFixed(2) || 0}s`);
     console.log(`   Preload: ${audioElements.preload}`);
     
     if (audioElements.sources.length > 0) {
