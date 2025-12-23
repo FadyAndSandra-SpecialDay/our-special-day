@@ -10,6 +10,7 @@
     "generate-music": "node scripts/generate-music-list.js",
     "fix-music-extensions": "node scripts/fix-music-extensions.js",
     "check-music": "node scripts/check-music-files.js",
+    "test-audio": "node scripts/test-audio-puppeteer.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },

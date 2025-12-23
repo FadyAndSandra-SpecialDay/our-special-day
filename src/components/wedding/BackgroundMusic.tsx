@@ -235,13 +235,20 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
         {/* Use source element for better format detection */}
         {currentSong && (() => {
           let audioSrc = currentSong;
+          // Ensure path starts with / for absolute path from public folder
           if (!audioSrc.startsWith('/')) {
             audioSrc = `/${audioSrc}`;
           }
           const pathParts = audioSrc.split('/');
           const folder = pathParts.slice(0, -1).join('/');
           const filename = pathParts[pathParts.length - 1];
-          const encodedPath = `${folder}/${encodeURIComponent(filename)}`;
+          
+          // Use Vite's BASE_URL to properly handle GitHub Pages base path
+          // BASE_URL already includes the trailing slash (e.g., '/our-special-day/')
+          const baseUrl = import.meta.env.BASE_URL;
+          // Remove leading slash from folder if present, then combine with base
+          const cleanFolder = folder.startsWith('/') ? folder.slice(1) : folder;
+          const encodedPath = `${baseUrl}${cleanFolder}/${encodeURIComponent(filename)}`;
           const ext = filename.toLowerCase().split('.').pop();
           
           // Determine MIME type based on extension
