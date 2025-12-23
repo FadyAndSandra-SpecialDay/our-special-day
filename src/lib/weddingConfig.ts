@@ -39,30 +39,28 @@ export const weddingConfig = {
 
   // Background music - RECOMMENDED: Use direct audio file URLs for best performance
   // 
+  // Your Google Drive folder: https://drive.google.com/drive/u/1/folders/1oNv7irFHp1N-F2WnexkXZIhPzbBktsez
+  //
+  // TO GET FILE URLs FROM YOUR DRIVE FOLDER:
+  // 1. Right-click each MP3 file > Share > Copy link
+  // 2. Extract FILE_ID from: https://drive.google.com/file/d/FILE_ID/view
+  // 3. Convert to: https://drive.google.com/uc?export=download&id=FILE_ID
+  // 4. Add to the array below
+  //
   // OPTION 1: Single song (string)
-  //   backgroundMusicUrl: "https://example.com/music.mp3",
+  //   backgroundMusicUrl: "https://drive.google.com/uc?export=download&id=FILE_ID",
   //
   // OPTION 2: Playlist (array of URLs) - Recommended! 
   //   Songs will play in sequence or shuffled randomly
-  //   backgroundMusicUrl: [
-  //     "https://example.com/song1.mp3",
-  //     "https://example.com/song2.mp3",
-  //     "https://example.com/song3.mp3",
-  //   ],
+  //   Add all your MP3 files from the Drive folder here:
   //
-  // BEST HOSTING OPTIONS (faster than Anghami):
-  // 1. Google Drive: Upload MP3, right-click > Share > Anyone with link > Copy link
-  //    Then convert: https://drive.google.com/uc?export=download&id=FILE_ID
-  // 2. Dropbox: Upload MP3, share link, change ?dl=0 to ?dl=1 at the end
-  // 3. Cloudflare R2 / AWS S3: Direct links (fastest)
-  // 4. GitHub Releases: Upload MP3 to a release, use raw.githubusercontent.com link
-  // 5. Your own server: Place MP3 files in public folder
-  //
-  // Example Google Drive link format:
-  //   If share link is: https://drive.google.com/file/d/1ABC123xyz/view?usp=sharing
-  //   Use: https://drive.google.com/uc?export=download&id=1ABC123xyz
-  //
-  backgroundMusicUrl: [] as string[] | string, // Add your music URL(s) here
+  backgroundMusicUrl: [
+    // Your Google Drive MP3 files (converted to direct download links)
+    "https://drive.google.com/uc?export=download&id=1oLEntHRZOpVdKtG1-jY48BApgHNO7cHB",
+    "https://drive.google.com/uc?export=download&id=1SwK1l8AoVfRS3iy6oQBQDvuZ4s9WyAt7",
+    // Add more files here as needed:
+    // "https://drive.google.com/uc?export=download&id=FILE_ID_3",
+  ] as string[] | string,
   
   // Shuffle playlist: true = random order, false = play in order
   backgroundMusicShuffle: true,

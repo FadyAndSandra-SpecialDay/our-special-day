@@ -1,29 +1,56 @@
 # Background Music Setup Guide
 
+## 📁 Your Google Drive Music Folder
+
+**Your folder:** https://drive.google.com/drive/u/1/folders/1oNv7irFHp1N-F2WnexkXZIhPzbBktsez
+
+This folder contains your MP3 files. Follow the steps below to get direct download URLs for each file.
+
+---
+
 ## 🎵 Best Options for Hosting Music (Fast Loading)
 
-### Option 1: Google Drive (Recommended - You Already Use It!)
+### Option 1: Google Drive (Recommended - You Already Have Files Here!)
 
-1. **Upload your music file(s)** to Google Drive
-2. **Right-click** the file > **Share** > **Anyone with the link**
-3. **Copy the sharing link**, it looks like:
-   ```
-   https://drive.google.com/file/d/1ABC123xyz/view?usp=sharing
-   ```
-4. **Extract the File ID** (the part between `/d/` and `/view`)
-5. **Convert to direct download link**:
+Your music folder: https://drive.google.com/drive/u/1/folders/1oNv7irFHp1N-F2WnexkXZIhPzbBktsez
+
+**Step-by-Step Instructions:**
+
+1. **Open your Google Drive folder** (link above)
+
+2. **For EACH MP3 file in the folder:**
+   - **Right-click** the file
+   - Click **Share** or **Get link**
+   - Make sure it's set to **"Anyone with the link can view"**
+   - **Copy the link** - it looks like:
+     ```
+     https://drive.google.com/file/d/1ABC123xyz/view?usp=sharing
+     ```
+
+3. **Extract the File ID** (the part between `/d/` and `/view`)
+   - From: `https://drive.google.com/file/d/1ABC123xyz/view?usp=sharing`
+   - File ID is: `1ABC123xyz`
+
+4. **Convert to direct download link**:
    ```
    https://drive.google.com/uc?export=download&id=1ABC123xyz
    ```
-6. **Use this link** in your `weddingConfig.ts`
 
-**Example:**
-```typescript
-backgroundMusicUrl: [
-  "https://drive.google.com/uc?export=download&id=1ABC123xyz",
-  "https://drive.google.com/uc?export=download&id=1DEF456abc",
-],
-```
+5. **Add all URLs to your config**:
+   ```typescript
+   backgroundMusicUrl: [
+     "https://drive.google.com/uc?export=download&id=FILE_ID_1",
+     "https://drive.google.com/uc?export=download&id=FILE_ID_2",
+     "https://drive.google.com/uc?export=download&id=FILE_ID_3",
+     // Add all your MP3 files here
+   ],
+   ```
+
+**Quick Method:** If you have many files, you can:
+- Open each file individually
+- Copy the share link
+- Extract the ID and convert
+- Add to the array in `weddingConfig.ts`
 
 ---
 
