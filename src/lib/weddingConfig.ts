@@ -38,8 +38,13 @@ export const weddingConfig = {
   galleryFolderId: "1l4IlQOJ5z7tA-Nn3_T3zsJHVAzPRrE2D",
 
   // Background music URL (add your music file URL here)
-  // You can upload to Google Drive, SoundCloud, or any hosting service
-  backgroundMusicUrl: "", // Add your music URL here, e.g., "https://example.com/music.mp3"
+  // For direct audio files: "https://example.com/music.mp3"
+  // For Anghami: Paste the song URL (e.g., "https://play.anghami.com/song/1104184394")
+  //   or the embed URL from Share > Embed option
+  backgroundMusicUrl: "https://play.anghami.com/song/1104184394", 
+  
+  // Background music type: "audio" for direct audio files, "anghami" for Anghami
+  backgroundMusicType: "anghami" as "audio" | "anghami",
 
   // Bible verse
   bibleVerse: {

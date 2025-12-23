@@ -39,7 +39,11 @@ const Index = () => {
         
         {/* Background Music */}
         {weddingConfig.backgroundMusicUrl && (
-          <BackgroundMusic src={weddingConfig.backgroundMusicUrl} volume={0.3} />
+          <BackgroundMusic 
+            src={weddingConfig.backgroundMusicUrl} 
+            volume={0.3}
+            type={weddingConfig.backgroundMusicType}
+          />
         )}
       </div>
     </>
