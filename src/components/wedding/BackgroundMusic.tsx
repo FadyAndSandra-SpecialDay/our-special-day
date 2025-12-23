@@ -55,7 +55,12 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
       
       // Provide more specific error messages
       if (errorCode === 4) { // MEDIA_ELEMENT_ERROR: Format error
-        detailedError += `\n\n❌ Format Error: The file may not be a valid audio format, or the file extension doesn't match the actual format.\n\n💡 Solutions:\n1. Verify the file is a valid MP3, MP4, or M4A file\n2. If the file is MP4/M4A, rename it to .m4a or .mp4\n3. Try converting the file to MP3 format\n4. Check the file isn't corrupted`;
+        const ext = currentSong.toLowerCase().split('.').pop();
+        if (ext === 'm4a' || ext === 'mp4') {
+          detailedError += `\n\n❌ Format Error: M4A/MP4 files may not be supported by your browser or may need conversion.\n\n💡 Recommended Solution:\nConvert to MP3 format for universal browser support:\n1. Use VLC Media Player (Media → Convert / Save → Audio - MP3)\n2. Or use online converter (search "m4a to mp3")\n3. Replace the file in public/music/ folder\n4. Run: npm run generate-music\n\nSee CONVERT_TO_MP3.md for detailed instructions.`;
+        } else {
+          detailedError += `\n\n❌ Format Error: The file may not be a valid audio format or may be corrupted.\n\n💡 Solutions:\n1. Verify the file is a valid MP3, MP4, or M4A file\n2. Try converting to MP3 format for better compatibility\n3. Check the file isn't corrupted\n4. Try playing the file in a media player first`;
+        }
       } else {
         detailedError += `\n\nError: ${errorMsg} (Code: ${errorCode})`;
       }
@@ -109,25 +114,18 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
     // URL encode only the filename part to handle spaces and special characters
     const pathParts = audioSrc.split('/');
     const folder = pathParts.slice(0, -1).join('/'); // /music
-    const filename = pathParts[pathParts.length - 1]; // filename.mp3
+    const filename = pathParts[pathParts.length - 1]; // filename.m4a
     const encodedPath = `${folder}/${encodeURIComponent(filename)}`;
     
-    // Detect file format from extension to set correct MIME type
-    const ext = filename.toLowerCase().split('.').pop();
-    let mimeType = 'audio/mpeg'; // Default to MP3
-    
-    if (ext === 'mp4' || ext === 'm4a') {
-      mimeType = 'audio/mp4';
-    } else if (ext === 'mp3') {
-      mimeType = 'audio/mpeg';
-    }
-    
-    // Set the source with explicit type hint
+    // Set the source
+    // Note: M4A files may have compatibility issues in some browsers
+    // Consider converting to MP3 for better universal support
     audio.src = encodedPath;
     audio.crossOrigin = "anonymous";
     
-    // Note: We can't set type attribute directly on audio element,
-    // but the browser should detect based on file content
+    // Debug: Log the extension to help diagnose format issues
+    const ext = filename.toLowerCase().split('.').pop();
+    console.log(`🎵 Loading audio: ${encodedPath} (format: ${ext})`);
     
     // Debug logging
     console.log(`🎵 Attempting to load: ${encodedPath}`);
