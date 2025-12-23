@@ -40,8 +40,12 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Set volume
-    audio.volume = isMuted ? 0 : volume;
+    // Set volume - but don't force muted state here (let attemptAutoPlay handle it)
+    if (!isMuted) {
+      audio.volume = volume;
+    } else {
+      audio.volume = 0;
+    }
     
     // Reset any previous errors
     setError(null);
@@ -122,18 +126,46 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
     console.log(`🎵 Loading audio: ${currentSong} (format: ${ext})`);
     
     // Function to attempt auto-play
+    // Strategy: Start muted (browsers allow muted autoplay), then unmute after starting
     const attemptAutoPlay = async () => {
       if (!audio) return;
       if (audio.paused && audio.readyState >= 2) {
         try {
+          // Try to play muted first (browsers allow muted autoplay)
+          const wasMuted = audio.muted;
+          if (!audio.muted) {
+            audio.muted = true;
+          }
+          
           await audio.play();
           setIsPlaying(true);
-          console.log("🎵 ✅ Audio auto-played successfully!");
+          console.log("🎵 ✅ Audio auto-played successfully (muted initially)!");
+          
+          // Unmute after a brief moment (browsers allow this after play starts)
+          setTimeout(() => {
+            if (audio && !wasMuted) {
+              audio.muted = false;
+              setIsMuted(false);
+              console.log("🎵 🔊 Audio unmuted!");
+            }
+          }, 500);
+          
           setError(null);
         } catch (error) {
-          // Auto-play was blocked by browser
-          console.log("⚠️ Auto-play blocked by browser, waiting for user interaction");
-          console.log("   (This is normal - browsers block auto-play until user interacts)");
+          // Auto-play was blocked even when muted - try unmuted as fallback
+          console.log("⚠️ Muted auto-play blocked, trying unmuted...");
+          try {
+            audio.muted = false;
+            await audio.play();
+            setIsPlaying(true);
+            setIsMuted(false);
+            console.log("🎵 ✅ Audio auto-played successfully (unmuted)!");
+            setError(null);
+          } catch (error2) {
+            // Auto-play was blocked by browser
+            console.log("⚠️ Auto-play blocked by browser, waiting for user interaction");
+            console.log("   (This is normal - browsers block auto-play until user interacts)");
+          }
         }
       }
     };
