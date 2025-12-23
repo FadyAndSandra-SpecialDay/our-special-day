@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Volume2, VolumeX, AlertCircle, SkipForward } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +17,7 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [playlist, setPlaylist] = useState<string[]>([]);
   const [startMuted, setStartMuted] = useState(true); // Start muted for autoplay
+  const [showPrompt, setShowPrompt] = useState(false); // Show prompt if autoplay blocked
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // Initialize playlist
@@ -35,6 +36,31 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
   }, [src, shuffle]);
 
   const currentSong = playlist[currentSongIndex];
+
+  // Play on first user interaction if auto-play was blocked
+  // This function is used by both the prompt overlay and event listeners
+  const handleFirstInteraction = useCallback(async () => {
+    const audio = audioRef.current;
+    if (audio && audio.paused) {
+      try {
+        setShowPrompt(false); // Hide prompt immediately when user interacts
+        
+        // Unmute before playing (in case it was muted for autoplay)
+        if (audio.muted && startMuted) {
+          audio.muted = false;
+          setStartMuted(false);
+          setIsMuted(false);
+        }
+        await audio.play();
+        setIsPlaying(true);
+        setError(null);
+        console.log("🎵 ✅ Audio started on user interaction");
+      } catch (error) {
+        console.error("Failed to play audio:", error);
+        setError("Could not play audio. Browser may require user interaction.");
+      }
+    }
+  }, [startMuted]);
 
   useEffect(() => {
     if (type === "anghami" || !currentSong) return;
@@ -150,11 +176,12 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
       if (!audio.paused) {
         console.log("🎵 ✅ HTML autoplay worked! Audio is playing automatically.");
         setIsPlaying(true);
+        setShowPrompt(false); // Hide prompt if autoplay worked
       } else {
         // HTML autoplay was blocked by browser
-        // This is normal - audio will start when user interacts
-        console.log("ℹ️ HTML autoplay blocked by browser (normal behavior)");
-        console.log("   Audio will start automatically when user clicks/touches the page");
+        // Show visual prompt to encourage user interaction
+        setShowPrompt(true);
+        console.log("ℹ️ HTML autoplay blocked - showing prompt to start music");
       }
     };
     
@@ -193,29 +220,10 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
       checkAutoplayStatus();
     }, 1500);
 
-    // Play on first user interaction if auto-play was blocked
-    const handleFirstInteraction = async () => {
-      if (audio && audio.paused) {
-        try {
-          // Unmute before playing (in case it was muted for autoplay)
-          if (audio.muted && startMuted) {
-            audio.muted = false;
-            setStartMuted(false);
-            setIsMuted(false);
-          }
-          await audio.play();
-          setIsPlaying(true);
-          setError(null);
-          console.log("🎵 ✅ Audio started on user interaction");
-        } catch (error) {
-          console.error("Failed to play audio:", error);
-          setError("Could not play audio. Browser may require user interaction.");
-        }
-      }
-    };
 
     // Add listeners for user interaction (multiple events for better coverage)
-    const interactionEvents = ['click', 'touchstart', 'mousedown', 'keydown'];
+    // Includes click, touch, scroll, and keyboard events
+    const interactionEvents = ['click', 'touchstart', 'mousedown', 'keydown', 'scroll', 'wheel'];
     interactionEvents.forEach(eventType => {
       document.addEventListener(eventType, handleFirstInteraction, { once: true, passive: true });
     });
@@ -235,7 +243,7 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
       audio.removeEventListener('canplaythrough', handleCanPlayThrough);
       audio.removeEventListener('loadstart', handleLoadStart);
     };
-  }, [currentSong, playlist.length, isPlaying, volume, isMuted, type]);
+  }, [currentSong, playlist.length, isPlaying, volume, isMuted, type, handleFirstInteraction]);
 
   const playNext = () => {
     if (playlist.length <= 1) return;
@@ -259,10 +267,19 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
     const audio = audioRef.current;
     if (!audio) return;
 
+    // Hide prompt if visible
+    setShowPrompt(false);
+
     if (isPlaying) {
       audio.pause();
     } else {
       try {
+        // Unmute if it was muted for autoplay
+        if (audio.muted && startMuted) {
+          audio.muted = false;
+          setStartMuted(false);
+          setIsMuted(false);
+        }
         await audio.play();
         setError(null);
       } catch (error) {
@@ -271,11 +288,60 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
       }
     }
   };
+  
 
   if (!currentSong) return null;
 
   return (
     <>
+      {/* Visual prompt to start music if autoplay was blocked */}
+      {showPrompt && !isPlaying && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/95 backdrop-blur-sm"
+          onClick={handleFirstInteraction}
+          onTouchStart={handleFirstInteraction}
+          style={{ cursor: 'pointer' }}
+        >
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="text-center p-8 max-w-md mx-4"
+          >
+            <motion.div
+              animate={{ 
+                scale: [1, 1.1, 1],
+                rotate: [0, 5, -5, 0]
+              }}
+              transition={{ 
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="text-6xl mb-6"
+            >
+              🎵
+            </motion.div>
+            <h3 className="text-2xl font-display font-semibold text-foreground mb-4">
+              Start the Music
+            </h3>
+            <p className="text-lg text-muted-foreground mb-6">
+              Click, tap, or scroll to begin
+            </p>
+            <motion.div
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-sm text-gold uppercase tracking-wider"
+            >
+              Click, Tap, or Scroll to Start →
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      )}
+      
       <audio
         ref={audioRef}
         preload="auto"
