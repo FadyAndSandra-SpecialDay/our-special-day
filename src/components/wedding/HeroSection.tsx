@@ -19,14 +19,14 @@ const HeroSection = () => {
       {/* Decorative elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-rose/20 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-40 right-10 w-40 h-40 bg-salmon/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
-        <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-coral/15 rounded-full blur-2xl animate-float" style={{ animationDelay: "4s" }} />
-        <div className="absolute top-1/2 left-1/4 w-20 h-20 bg-orange/12 rounded-full blur-2xl animate-float" style={{ animationDelay: "1s" }} />
+        <div className="absolute bottom-40 right-10 w-40 h-40 bg-gold/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
+        <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-sage/20 rounded-full blur-2xl animate-float" style={{ animationDelay: "4s" }} />
+        <div className="absolute top-1/2 left-1/4 w-20 h-20 bg-blush/15 rounded-full blur-2xl animate-float" style={{ animationDelay: "1s" }} />
       </div>
 
       {/* Ornamental border */}
-      <div className="absolute inset-4 md:inset-10 border border-salmon/30 rounded-lg pointer-events-none" />
-      <div className="absolute inset-6 md:inset-12 border border-coral/20 rounded-lg pointer-events-none" />
+      <div className="absolute inset-4 md:inset-10 border border-gold/20 rounded-lg pointer-events-none" />
+      <div className="absolute inset-6 md:inset-12 border border-gold/10 rounded-lg pointer-events-none" />
       
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/20 pointer-events-none" />
@@ -36,7 +36,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-base md:text-lg font-body text-coral uppercase tracking-[0.3em] mb-8"
+          className="text-sm md:text-base font-body text-muted-foreground uppercase tracking-[0.3em] mb-8"
         >
           {t("hero.togetherWithFamilies")}
         </motion.p>
@@ -47,10 +47,10 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mb-6"
         >
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-display font-semibold text-burgundy leading-tight">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-semibold text-foreground leading-tight">
             {t("hero.bride")}
             <span className="inline-flex items-center mx-4 md:mx-6">
-              <Heart className="w-10 h-10 md:w-14 md:h-14 text-orange fill-coral/40" />
+              <Heart className="w-8 h-8 md:w-12 md:h-12 text-gold fill-gold/30" />
             </span>
             {t("hero.groom")}
           </h1>
@@ -62,16 +62,16 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="flex items-center justify-center gap-4 mb-8"
         >
-          <div className="w-16 md:w-24 h-px bg-gradient-to-r from-transparent to-orange/60" />
-          <span className="text-orange text-xl md:text-2xl">✦</span>
-          <div className="w-16 md:w-24 h-px bg-gradient-to-l from-transparent to-orange/60" />
+          <div className="w-16 md:w-24 h-px bg-gradient-to-r from-transparent to-gold/50" />
+          <span className="text-gold text-lg">✦</span>
+          <div className="w-16 md:w-24 h-px bg-gradient-to-l from-transparent to-gold/50" />
         </motion.div>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="text-xl md:text-2xl lg:text-3xl font-body text-burgundy/90 mb-6 max-w-2xl mx-auto italic"
+          className="text-lg md:text-xl font-body text-muted-foreground mb-4 max-w-2xl mx-auto italic"
         >
           {t("hero.invitation")}
         </motion.p>
@@ -80,7 +80,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="text-3xl md:text-4xl lg:text-5xl font-display font-medium text-burgundy mb-10"
+          className="text-2xl md:text-3xl font-display font-medium text-foreground mb-8"
         >
           {formattedDate}
         </motion.p>
@@ -95,7 +95,7 @@ const HeroSection = () => {
           <blockquote className="text-base md:text-lg font-body text-muted-foreground italic border-l-2 border-gold/50 pl-4 rtl:border-l-0 rtl:border-r-2 rtl:pl-0 rtl:pr-4">
             "{t("hero.bibleVerse.text")}"
           </blockquote>
-          <p className="text-base md:text-lg font-body text-orange mt-3">— {t("hero.bibleVerse.reference")}</p>
+          <p className="text-sm font-body text-gold mt-2">— {t("hero.bibleVerse.reference")}</p>
         </motion.div>
 
         <motion.div
@@ -103,7 +103,7 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
         >
-          <p className="text-base md:text-lg font-body text-burgundy/80 uppercase tracking-widest mb-8">
+          <p className="text-sm font-body text-muted-foreground uppercase tracking-widest mb-6">
             {t("hero.countingDown")}
           </p>
           <CountdownTimer targetDate={weddingConfig.weddingDate} />
