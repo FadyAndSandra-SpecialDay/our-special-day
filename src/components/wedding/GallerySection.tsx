@@ -207,7 +207,7 @@ const GallerySection = () => {
                       <div className="relative overflow-hidden rounded-xl shadow-soft border border-gold/10 aspect-square md:aspect-[4/5]">
                         <img
                           src={image.url}
-                          alt={image.alt}
+                          alt=""
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                           loading="lazy"
                         />
@@ -303,9 +303,17 @@ const GallerySection = () => {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
                 src={images[selectedImage].fullUrl}
-                alt={images[selectedImage].alt}
+                alt=""
                 className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
+                onError={(e) => {
+                  // Fallback: if fullUrl fails, try using the thumbnail URL in larger size
+                  const target = e.target as HTMLImageElement;
+                  const imageId = images[selectedImage]?.id;
+                  if (imageId && target.src !== `https://drive.google.com/uc?export=download&id=${imageId}`) {
+                    target.src = `https://drive.google.com/uc?export=download&id=${imageId}`;
+                  }
+                }}
               />
 
               {/* Image counter in lightbox */}

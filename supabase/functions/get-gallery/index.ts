@@ -87,8 +87,9 @@ serve(async (req) => {
       id: file.id,
       name: file.name,
       url: `https://drive.google.com/thumbnail?id=${file.id}&sz=w800`,
-      fullUrl: `https://drive.google.com/uc?export=view&id=${file.id}`,
-      alt: file.name || `Gallery image ${index + 1}`,
+      // Use download URL for full view - this ensures the image displays directly without showing filename
+      fullUrl: `https://drive.google.com/uc?export=download&id=${file.id}`,
+      alt: `Gallery image ${index + 1}`, // Don't use filename as alt text
     }));
 
     return new Response(JSON.stringify({ images }), {
