@@ -60,14 +60,14 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
           className="flex flex-col items-center"
         >
           <div className="relative">
-            <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg bg-card shadow-soft border border-border/50 flex items-center justify-center">
-              <span className="text-3xl md:text-4xl font-display font-semibold text-foreground">
+            <div className="w-24 h-24 md:w-28 md:h-28 rounded-lg bg-peach/50 shadow-soft border border-salmon/30 flex items-center justify-center">
+              <span className="text-4xl md:text-5xl font-display font-semibold text-burgundy">
                 {String(unit.value).padStart(2, "0")}
               </span>
             </div>
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent via-orange/50 to-transparent" />
           </div>
-          <span className="mt-3 text-sm md:text-base font-body text-muted-foreground uppercase tracking-widest">
+          <span className="mt-3 text-base md:text-lg font-body text-burgundy/80 uppercase tracking-widest">
             {unit.label}
           </span>
         </motion.div>

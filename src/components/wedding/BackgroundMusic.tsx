@@ -334,7 +334,7 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
             <motion.div
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1.5, repeat: Infinity }}
-              className="text-sm text-gold uppercase tracking-wider"
+              className="text-base text-orange uppercase tracking-wider"
             >
               Click, Tap, or Scroll to Start →
             </motion.div>
@@ -393,7 +393,7 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-destructive/90 text-card px-3 py-2 rounded-lg text-xs flex items-center gap-2 max-w-xs"
+              className="bg-burgundy/90 text-white px-4 py-2.5 rounded-lg text-sm flex items-center gap-2 max-w-xs"
             >
               <AlertCircle className="w-4 h-4" />
               <span>{error}</span>
@@ -402,7 +402,7 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
           
           {/* Song counter for playlists */}
           {playlist.length > 1 && (
-            <div className="text-xs text-muted-foreground bg-card/80 backdrop-blur-sm px-2 py-1 rounded">
+            <div className="text-sm text-burgundy/80 bg-peach/80 backdrop-blur-sm px-3 py-1.5 rounded">
               {currentSongIndex + 1} / {playlist.length}
             </div>
           )}
@@ -413,17 +413,17 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
                 onClick={playNext}
                 variant="outline"
                 size="icon"
-                className="rounded-full w-12 h-12 bg-card/80 backdrop-blur-sm border-gold/20 hover:bg-card hover:border-gold/40 shadow-lg"
+                className="rounded-full w-12 h-12 bg-peach/80 backdrop-blur-sm border-orange/30 hover:bg-salmon/40 hover:border-coral/50 shadow-lg"
                 aria-label="Next song"
               >
-                <SkipForward className="w-5 h-5 text-gold" />
+                <SkipForward className="w-5 h-5 text-orange" />
               </Button>
             )}
             <Button
               onClick={togglePlay}
               variant="outline"
               size="icon"
-              className="rounded-full w-12 h-12 bg-card/80 backdrop-blur-sm border-gold/20 hover:bg-card hover:border-gold/40 shadow-lg"
+              className="rounded-full w-12 h-12 bg-peach/80 backdrop-blur-sm border-orange/30 hover:bg-salmon/40 hover:border-coral/50 shadow-lg"
               aria-label={isPlaying ? "Pause music" : "Play music"}
             >
               <AnimatePresence mode="wait">
@@ -433,7 +433,7 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
-                    className="w-5 h-5 border-2 border-gold border-t-transparent rounded-full animate-spin"
+                    className="w-5 h-5 border-2 border-orange border-t-transparent rounded-full animate-spin"
                   />
                 ) : (
                   <motion.div
@@ -441,7 +441,7 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
-                    className="w-5 h-5 border-l-8 border-t-4 border-b-4 border-transparent border-l-gold ml-1"
+                    className="w-5 h-5 border-l-8 border-t-4 border-b-4 border-transparent border-l-orange ml-1"
                   />
                 )}
               </AnimatePresence>
@@ -450,13 +450,13 @@ const BackgroundMusic = ({ src, volume = 0.3, shuffle = true, type = "audio" }: 
               onClick={toggleMute}
               variant="outline"
               size="icon"
-              className="rounded-full w-12 h-12 bg-card/80 backdrop-blur-sm border-gold/20 hover:bg-card hover:border-gold/40 shadow-lg"
+              className="rounded-full w-12 h-12 bg-peach/80 backdrop-blur-sm border-orange/30 hover:bg-salmon/40 hover:border-coral/50 shadow-lg"
               aria-label={isMuted ? "Unmute music" : "Mute music"}
             >
               {isMuted ? (
-                <VolumeX className="w-5 h-5 text-gold" />
+                <VolumeX className="w-5 h-5 text-orange" />
               ) : (
-                <Volume2 className="w-5 h-5 text-gold" />
+                <Volume2 className="w-5 h-5 text-orange" />
               )}
             </Button>
           </div>

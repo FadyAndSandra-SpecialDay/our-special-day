@@ -137,8 +137,8 @@ const RSVPSection = () => {
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", stiffness: 200, damping: 15 }}
           >
-            <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-gold/20 flex items-center justify-center shadow-glow">
-              <Check className="w-12 h-12 text-gold" />
+            <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-orange/20 flex items-center justify-center shadow-glow">
+              <Check className="w-12 h-12 text-orange" />
             </div>
           </motion.div>
           <motion.h2
@@ -163,11 +163,11 @@ const RSVPSection = () => {
   }
 
   return (
-    <section id="rsvp" className="py-24 px-4 bg-secondary/30 relative overflow-hidden">
+    <section id="rsvp" className="py-24 px-4 bg-peach/40 relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-rose/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-sage/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-0 w-96 h-96 bg-coral/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-salmon/5 rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-2xl mx-auto relative z-10">
@@ -183,7 +183,7 @@ const RSVPSection = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-sm font-body text-gold uppercase tracking-[0.3em] mb-4"
+            className="text-base md:text-lg font-body text-coral uppercase tracking-[0.3em] mb-4"
           >
             {t("rsvp.subtitle")}
           </motion.p>
@@ -192,7 +192,7 @@ const RSVPSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold text-foreground mb-4"
+            className="text-5xl md:text-6xl lg:text-7xl font-display font-semibold text-burgundy mb-6"
           >
             {t("rsvp.title")}
           </motion.h2>
@@ -219,7 +219,7 @@ const RSVPSection = () => {
                     className="font-body pl-10"
                   />
                   {isLoading && (
-                    <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gold animate-spin" />
+                    <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-orange animate-spin" />
                   )}
                 </div>
 
@@ -236,7 +236,7 @@ const RSVPSection = () => {
                         }}
                         className={`p-3 text-left rounded-md font-body transition-colors ${
                           selectedGuest?.name === guest.name
-                            ? "bg-gold/20 text-foreground border border-gold/30"
+                            ? "bg-orange/20 text-burgundy border border-orange/40"
                             : "hover:bg-muted"
                         }`}
                       >
@@ -247,14 +247,14 @@ const RSVPSection = () => {
                 )}
 
                 {searchQuery.length >= 2 && !isLoading && guests.length === 0 && (
-                  <p className="text-sm text-muted-foreground font-body p-3 text-center border rounded-lg">
+                    <p className="text-base text-burgundy/80 font-body p-4 text-center border rounded-lg">
                     {t("rsvp.noGuestsFound")}
                   </p>
                 )}
 
                 {selectedGuest && (
-                  <div className="flex items-center gap-2 p-3 bg-gold/10 rounded-lg border border-gold/20">
-                    <Heart className="w-4 h-4 text-gold" />
+                  <div className="flex items-center gap-2 p-3 bg-salmon/20 rounded-lg border border-coral/30">
+                    <Heart className="w-5 h-5 text-coral" />
                     <span className="font-body text-foreground">{selectedGuest.name}</span>
                     <button
                       type="button"
@@ -269,7 +269,7 @@ const RSVPSection = () => {
 
               {/* Attendance Selection */}
               <div className="space-y-4">
-                <Label className="text-base font-display">{t("rsvp.confirmAttendance")}</Label>
+                <Label className="text-lg font-display text-burgundy">{t("rsvp.confirmAttendance")}</Label>
                 <RadioGroup
                   value={attendance}
                   onValueChange={(value) => setAttendance(value as "attending" | "not-attending")}
@@ -279,24 +279,24 @@ const RSVPSection = () => {
                     htmlFor="attending"
                     className={`flex flex-col items-center gap-2 p-6 border-2 rounded-lg cursor-pointer transition-all ${
                       attendance === "attending"
-                        ? "border-gold bg-gold/10"
-                        : "border-border hover:border-gold/50"
+                        ? "border-orange bg-orange/15"
+                        : "border-border hover:border-coral/50"
                     }`}
                   >
                     <RadioGroupItem value="attending" id="attending" className="sr-only" />
-                    <Check className={`w-8 h-8 ${attendance === "attending" ? "text-gold" : "text-muted-foreground"}`} />
+                    <Check className={`w-10 h-10 ${attendance === "attending" ? "text-orange" : "text-muted-foreground"}`} />
                     <span className="font-display font-medium">{t("rsvp.attending")}</span>
                   </Label>
                   <Label
                     htmlFor="not-attending"
                     className={`flex flex-col items-center gap-2 p-6 border-2 rounded-lg cursor-pointer transition-all ${
                       attendance === "not-attending"
-                        ? "border-rose bg-rose/10"
-                        : "border-border hover:border-rose/50"
+                        ? "border-burgundy bg-burgundy/15"
+                        : "border-border hover:border-burgundy/50"
                     }`}
                   >
                     <RadioGroupItem value="not-attending" id="not-attending" className="sr-only" />
-                    <X className={`w-8 h-8 ${attendance === "not-attending" ? "text-rose" : "text-muted-foreground"}`} />
+                    <X className={`w-10 h-10 ${attendance === "not-attending" ? "text-burgundy" : "text-muted-foreground"}`} />
                     <span className="font-display font-medium">{t("rsvp.notAttending")}</span>
                   </Label>
                 </RadioGroup>
@@ -305,7 +305,7 @@ const RSVPSection = () => {
               <Button
                 type="submit"
                 disabled={isSubmitting || !selectedGuest || !attendance}
-                className="w-full py-6 text-lg font-display bg-gold hover:bg-gold/90 text-primary-foreground"
+                className="w-full py-6 text-xl font-display bg-orange hover:bg-orange/90 text-white shadow-lg"
               >
                 {isSubmitting ? t("rsvp.submitting") : t("rsvp.submit")}
               </Button>

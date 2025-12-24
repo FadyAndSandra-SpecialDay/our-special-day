@@ -93,8 +93,8 @@ const GallerySection = () => {
     <section id="gallery" className="py-24 px-4 relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 right-10 w-64 h-64 bg-rose/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-10 w-64 h-64 bg-gold/5 rounded-full blur-3xl" />
+        <div className="absolute top-20 right-10 w-64 h-64 bg-salmon/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-10 w-64 h-64 bg-coral/5 rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -110,7 +110,7 @@ const GallerySection = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-sm font-body text-gold uppercase tracking-[0.3em] mb-4"
+            className="text-base md:text-lg font-body text-coral uppercase tracking-[0.3em] mb-4"
           >
             {t("gallery.ourMoments")}
           </motion.p>
@@ -119,7 +119,7 @@ const GallerySection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold text-foreground mb-4"
+            className="text-5xl md:text-6xl lg:text-7xl font-display font-semibold text-burgundy mb-6"
           >
             {t("gallery.title")}
           </motion.h2>
@@ -142,7 +142,7 @@ const GallerySection = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
             >
-              <Loader2 className="w-8 h-8 text-gold animate-spin" />
+              <Loader2 className="w-8 h-8 text-orange animate-spin" />
             </motion.div>
           </div>
         )}
@@ -191,7 +191,7 @@ const GallerySection = () => {
                       transition={{ duration: 0.5, delay: index * 0.1 }}
                       className="relative group"
                     >
-                      <div className="relative overflow-hidden rounded-xl shadow-soft border border-gold/10 aspect-square md:aspect-[4/5]">
+                      <div className="relative overflow-hidden rounded-xl shadow-soft border border-salmon/20 aspect-square md:aspect-[4/5]">
                         <img
                           src={image.url}
                           alt=""
@@ -203,8 +203,8 @@ const GallerySection = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="hidden md:flex -left-12 lg:-left-16 h-12 w-12 border-gold/20 bg-card/80 backdrop-blur-sm hover:bg-card hover:border-gold/40 text-gold" />
-              <CarouselNext className="hidden md:flex -right-12 lg:-right-16 h-12 w-12 border-gold/20 bg-card/80 backdrop-blur-sm hover:bg-card hover:border-gold/40 text-gold" />
+              <CarouselPrevious className="hidden md:flex -left-12 lg:-left-16 h-12 w-12 border-orange/30 bg-peach/80 backdrop-blur-sm hover:bg-salmon/30 hover:border-coral/50 text-orange" />
+              <CarouselNext className="hidden md:flex -right-12 lg:-right-16 h-12 w-12 border-orange/30 bg-peach/80 backdrop-blur-sm hover:bg-salmon/30 hover:border-coral/50 text-orange" />
             </Carousel>
 
             {/* Carousel Indicators */}
@@ -215,8 +215,8 @@ const GallerySection = () => {
                   onClick={() => api?.scrollTo(index)}
                   className={`h-1.5 rounded-full transition-all duration-300 ${
                     Math.abs(current - index) <= 1
-                      ? "w-8 bg-gold"
-                      : "w-1.5 bg-gold/30 hover:bg-gold/50"
+                      ? "w-8 bg-orange"
+                      : "w-1.5 bg-coral/40 hover:bg-salmon/60"
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
@@ -226,7 +226,7 @@ const GallerySection = () => {
             {/* Image Counter */}
             {images.length > 0 && (
               <div className="text-center mt-6">
-                <p className="text-sm font-body text-muted-foreground">
+                <p className="text-base font-body text-burgundy/80">
                   {current + 1} / {images.length}
                 </p>
               </div>

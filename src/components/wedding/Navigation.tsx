@@ -41,9 +41,9 @@ const Navigation = () => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6 }}
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
+            className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
           isScrolled
-            ? "bg-background/95 backdrop-blur-md shadow-soft border-b border-gold/10"
+            ? "bg-peach/95 backdrop-blur-md shadow-soft border-b border-salmon/20"
             : "bg-transparent"
         }`}
       >
@@ -52,7 +52,7 @@ const Navigation = () => {
             {/* Logo */}
             <button
               onClick={() => scrollToSection("#home")}
-              className="font-display text-xl md:text-2xl font-semibold text-foreground"
+              className="font-display text-2xl md:text-3xl font-semibold text-burgundy"
             >
               {t("hero.bride")} & {t("hero.groom")}
             </button>
@@ -63,10 +63,10 @@ const Navigation = () => {
                 <button
                   key={item.href}
                   onClick={() => scrollToSection(item.href)}
-                  className="font-body text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-all duration-300 relative group"
+                  className="font-body text-base uppercase tracking-wider text-burgundy/70 hover:text-burgundy transition-all duration-300 relative group"
                 >
                   {item.label}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full" />
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-orange transition-all duration-300 group-hover:w-full" />
                 </button>
               ))}
               <LanguageSwitcher />

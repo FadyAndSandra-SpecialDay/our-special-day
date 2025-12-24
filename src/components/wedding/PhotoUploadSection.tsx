@@ -177,11 +177,11 @@ const PhotoUploadSection = () => {
   const uploadedFiles = files.filter((f) => f.status === "success");
 
   return (
-    <section id="upload" className="py-24 px-4 bg-secondary/30 relative overflow-hidden">
+    <section id="upload" className="py-24 px-4 bg-peach/40 relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blush/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-salmon/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-coral/5 rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-4xl mx-auto relative z-10">
@@ -197,7 +197,7 @@ const PhotoUploadSection = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-sm font-body text-gold uppercase tracking-[0.3em] mb-4"
+            className="text-base md:text-lg font-body text-coral uppercase tracking-[0.3em] mb-4"
           >
             {t("upload.shareTheLove")}
           </motion.p>
@@ -206,7 +206,7 @@ const PhotoUploadSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold text-foreground mb-4"
+            className="text-5xl md:text-6xl lg:text-7xl font-display font-semibold text-burgundy mb-6"
           >
             {t("upload.title")}
           </motion.h2>
@@ -215,7 +215,7 @@ const PhotoUploadSection = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-lg font-body text-muted-foreground max-w-md mx-auto"
+            className="text-xl md:text-2xl font-body text-burgundy/80 max-w-md mx-auto"
           >
             {t("upload.subtitle")}
           </motion.p>
@@ -235,8 +235,8 @@ const PhotoUploadSection = () => {
               onDragLeave={handleDragLeave}
               className={`relative border-2 border-dashed rounded-xl p-12 text-center transition-all duration-300 ${
                 isDragging
-                  ? "border-gold bg-gold/10 shadow-glow scale-[1.02]"
-                  : "border-border hover:border-gold/50 hover:bg-gold/5"
+                  ? "border-orange bg-orange/15 shadow-glow scale-[1.02]"
+                  : "border-border hover:border-coral/50 hover:bg-salmon/10"
               }`}
             >
               <input
@@ -251,15 +251,15 @@ const PhotoUploadSection = () => {
                 <motion.div
                   animate={isDragging ? { scale: 1.1, rotate: 5 } : { scale: 1, rotate: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="w-20 h-20 rounded-full bg-gold/10 flex items-center justify-center"
+                  className="w-20 h-20 rounded-full bg-orange/15 flex items-center justify-center"
                 >
-                  <Camera className="w-10 h-10 text-gold" />
+                  <Camera className="w-10 h-10 text-orange" />
                 </motion.div>
                 <div>
                   <p className="text-lg font-display font-medium text-foreground mb-1">
                     {t("upload.dragDrop")}
                   </p>
-                  <p className="text-sm font-body text-muted-foreground">
+                  <p className="text-base font-body text-burgundy/80">
                     {t("upload.orClick")}
                   </p>
                 </div>
@@ -282,7 +282,7 @@ const PhotoUploadSection = () => {
                   {pendingFiles.length > 0 && (
                     <Button
                       onClick={uploadFiles}
-                      className="bg-gold hover:bg-gold/90 text-primary-foreground"
+                      className="bg-orange hover:bg-orange/90 text-white text-lg shadow-lg"
                     >
                       <Upload className="w-4 h-4 mr-2" />
                       {t("upload.uploadAll")}
